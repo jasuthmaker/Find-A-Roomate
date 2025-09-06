@@ -48,7 +48,7 @@
 
         <!-- Swipe Card -->
         <div class="swipe-card-container">
-            <div class="swipe-card" id="swipeCard">
+            <div class="swipe-card frosty-card" id="swipeCard">
                 <div class="card-header">
                     <div class="profile-image">
                         <i class="fas fa-user-circle"></i>
@@ -165,11 +165,11 @@
             
             // Change background color based on swipe direction
             if (currentX > 50) {
-                card.style.backgroundColor = '#4CAF50';
+                card.style.backgroundColor = 'rgba(76, 175, 80, 0.3)';
             } else if (currentX < -50) {
-                card.style.backgroundColor = '#f44336';
+                card.style.backgroundColor = 'rgba(244, 67, 54, 0.3)';
             } else {
-                card.style.backgroundColor = '#fff';
+                card.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
             }
         }
 
@@ -189,7 +189,7 @@
                 // Return to center
                 card.style.transform = 'translateX(0) translateY(0) rotate(0deg)';
                 card.style.opacity = '1';
-                card.style.backgroundColor = '#fff';
+                card.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
             }
         }
 
@@ -226,7 +226,7 @@
                 // Reset card position on error
                 card.style.transform = 'translateX(0) translateY(0) rotate(0deg)';
                 card.style.opacity = '1';
-                card.style.backgroundColor = '#fff';
+                card.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
             });
         }
 

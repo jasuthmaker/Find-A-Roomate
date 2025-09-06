@@ -16,7 +16,6 @@ body {
 
 /* Auth Pages */
 .auth-body {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -225,7 +224,6 @@ body {
 
 /* Profile Setup */
 .profile-setup-body {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -425,7 +423,6 @@ body {
 
 /* Swipe Interface */
 .swipe-body, .matches-body, .no-matches-body {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     min-height: 100vh;
 }
 
@@ -439,19 +436,20 @@ body {
 }
 
 .swipe-nav {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     flex-wrap: nowrap;
     gap: 15px;
     min-height: 60px;
     border-radius: 0 0 20px 20px;
     margin: 0 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .nav-logo {
@@ -459,7 +457,7 @@ body {
     align-items: center;
     gap: 8px;
     font-weight: 700;
-    color: #333;
+    color: white;
 }
 
 .nav-logo i {
@@ -486,7 +484,7 @@ body {
     align-items: center;
     gap: 4px;
     text-decoration: none;
-    color: #666;
+    color: white;
     font-size: 0.85rem;
     transition: all 0.3s ease;
     padding: 10px 12px;
@@ -616,7 +614,11 @@ body {
     display: flex;
     justify-content: center;
     gap: 30px;
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 20px;
 }
 
 .action-btn {
@@ -757,6 +759,18 @@ body {
     margin-bottom: 20px;
 }
 
+/* Match card active state - white background when clicked */
+.match-card.active {
+    background: white !important;
+    color: #333 !important;
+}
+
+.match-card.active .match-info h3,
+.match-card.active .match-info p,
+.match-card.active .bio {
+    color: #333 !important;
+}
+
 .match-actions {
     display: flex;
     gap: 10px;
@@ -874,8 +888,21 @@ body {
 
 /* Rent Splitter Styles */
 .rent-splitter-body, .chat-assistant-body, .success-predictor-body {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     min-height: 100vh;
+}
+
+/* Rent Splitter Headers - Bold and White */
+.rent-splitter-body .page-header h1,
+.rent-splitter-body .feature-header h3,
+.rent-splitter-body .form-group label,
+.rent-splitter-body .split-methods h4,
+.rent-splitter-body .radio-item span,
+.rent-splitter-body .income-inputs h5,
+.rent-splitter-body .results-section h4,
+.rent-splitter-body .expense-form label,
+.rent-splitter-body .categories-section h4 {
+    color: white !important;
+    font-weight: bold !important;
 }
 
 .rent-splitter-container, .chat-assistant-container, .success-predictor-container {
@@ -1106,7 +1133,55 @@ body {
     line-height: 1.6;
 }
 
+/* Frosty Card Effect - Reusable Glass Morphism Style */
+.frosty-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.frosty-card:hover {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Frosty Card Variants */
+.frosty-card-light {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.frosty-card-dark {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 /* Chat Assistant Styles */
+/* Chat Assistant Headers - Bold and White */
+.chat-assistant-body .ai-info h3,
+.chat-assistant-body .ai-info p,
+.chat-assistant-body .help-topics h3 {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* Success Predictor Headers - Bold and White */
+.success-predictor-body .feature-header h3,
+.success-predictor-body .feature-header h4,
+.success-predictor-body .form-section h4,
+.success-predictor-body .form-group label,
+.success-predictor-body .metrics-grid h4,
+.success-predictor-body .data-visualization h4,
+.success-predictor-body .chart-container h4 {
+    color: white !important;
+    font-weight: bold !important;
+}
 .chat-features {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -1116,10 +1191,8 @@ body {
 }
 
 .help-topics {
-    background: white;
     border-radius: 20px;
     padding: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .help-topics h3 {
@@ -1134,9 +1207,7 @@ body {
 
 
 .chat-interface {
-    background: white;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     height: 600px;

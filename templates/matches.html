@@ -55,7 +55,7 @@
             {% if matches %}
                 <div class="matches-grid">
                     {% for match in matches %}
-                        <div class="match-card">
+                        <div class="match-card frosty-card">
                             <div class="match-header">
                                 <div class="profile-image">
                                     <i class="fas fa-user-circle"></i>
@@ -124,6 +124,16 @@
             card.addEventListener('mouseleave', function() {
                 this.style.transform = 'translateY(0)';
                 this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+            });
+            
+            // Add click functionality to change background to white
+            card.addEventListener('click', function() {
+                // Remove active class from all cards
+                document.querySelectorAll('.match-card').forEach(c => {
+                    c.classList.remove('active');
+                });
+                // Add active class to clicked card
+                this.classList.add('active');
             });
         });
 
