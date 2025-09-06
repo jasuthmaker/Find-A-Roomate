@@ -1028,7 +1028,6 @@ body {
 .income-inputs {
     margin-top: 20px;
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 12px;
     border-left: 4px solid #dc3545;
 }
@@ -1043,7 +1042,6 @@ body {
 .results-section {
     margin-top: 25px;
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 15px;
     border-left: 4px solid #dc3545;
 }
@@ -1102,12 +1100,10 @@ body {
 }
 
 .tip-card {
-    background: white;
     padding: 25px;
     border-radius: 15px;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .tip-card:hover {
@@ -1178,7 +1174,10 @@ body {
 .success-predictor-body .form-group label,
 .success-predictor-body .metrics-grid h4,
 .success-predictor-body .data-visualization h4,
-.success-predictor-body .chart-container h4 {
+.success-predictor-body .chart-container h4,
+.success-predictor-body .results-section h4,
+.success-predictor-body .tip-card h4,
+.success-predictor-body .tip-card p {
     color: white !important;
     font-weight: bold !important;
 }
@@ -1445,7 +1444,6 @@ body {
 
 .form-section {
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 15px;
     border-left: 4px solid #dc3545;
 }
@@ -1468,13 +1466,11 @@ body {
     align-items: center;
     gap: 15px;
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 15px;
     transition: all 0.3s ease;
 }
 
 .metric-card:hover {
-    background: white;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
@@ -1510,10 +1506,8 @@ body {
 }
 
 .chart-container {
-    background: white;
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .chart-container h4 {
