@@ -1,1 +1,3 @@
 roommate_finder.db
+.env
+*.env
