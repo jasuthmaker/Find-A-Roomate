@@ -109,12 +109,12 @@ def add_sample_data():
         ('mike_davis', 'mike@example.com', ?),
         ('sarah_miller', 'sarah@example.com', ?)
     ''', (
-        generate_password_hash('password123'),
-        generate_password_hash('password123'),
-        generate_password_hash('password123'),
-        generate_password_hash('password123'),
-        generate_password_hash('password123'),
-        generate_password_hash('password123')
+        generate_password_hash('password123', method='pbkdf2:sha256'),
+        generate_password_hash('password123', method='pbkdf2:sha256'),
+        generate_password_hash('password123', method='pbkdf2:sha256'),
+        generate_password_hash('password123', method='pbkdf2:sha256'),
+        generate_password_hash('password123', method='pbkdf2:sha256'),
+        generate_password_hash('password123', method='pbkdf2:sha256')
     ))
     
     conn.commit()
@@ -203,7 +203,7 @@ def signup():
             return render_template("signup.html")
         
         # Create new user
-        password_hash = generate_password_hash(password)
+        password_hash = generate_password_hash(password, method='pbkdf2:sha256')
         conn.execute('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)', (username, email, password_hash))
         conn.commit()
         
