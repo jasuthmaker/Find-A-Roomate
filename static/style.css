@@ -29,12 +29,11 @@ body {
 }
 
 .auth-card {
-    background: rgba(255, 255, 255, 0.1);
+    background: white;
     border-radius: 20px;
     padding: 40px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
     animation: slideUp 0.6s ease-out;
 }
 
@@ -70,11 +69,11 @@ body {
 .logo h1 {
     font-size: 1.8rem;
     font-weight: 700;
-    color: white;
+    color: #333;
 }
 
 .auth-subtitle {
-    color: rgba(255, 255, 255, 0.9);
+    color: #666;
     font-size: 0.9rem;
 }
 
@@ -92,7 +91,7 @@ body {
     align-items: center;
     gap: 8px;
     font-weight: 500;
-    color: white;
+    color: #555;
     margin-bottom: 8px;
     font-size: 0.9rem;
 }
@@ -100,24 +99,18 @@ body {
 .form-group input {
     width: 100%;
     padding: 12px 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid #e1e5e9;
     border-radius: 12px;
     font-size: 1rem;
     transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: #f8f9fa;
 }
 
 .form-group input:focus {
     outline: none;
     border-color: #dc3545;
-    background: rgba(255, 255, 255, 0.2);
+    background: white;
     box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
-    color: white;
-}
-
-.form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
 }
 
 .form-group.focused label {
@@ -181,7 +174,7 @@ body {
 
 .auth-footer {
     text-align: center;
-    color: rgba(255, 255, 255, 0.9);
+    color: #666;
     font-size: 0.9rem;
 }
 
@@ -265,31 +258,6 @@ body {
     font-size: 1rem;
 }
 
-/* Profile setup specific styles - black text for better contrast */
-.profile-setup-body .form-group label {
-    color: black !important;
-}
-
-.profile-setup-body .form-group input {
-    border-color: #ccc !important;
-    color: black !important;
-}
-
-.profile-setup-body .form-group input:focus {
-    border-color: #dc3545 !important;
-    color: black !important;
-}
-
-.profile-setup-body .form-group textarea {
-    border-color: #ccc !important;
-    color: black !important;
-}
-
-.profile-setup-body .form-group textarea:focus {
-    border-color: #dc3545 !important;
-    color: black !important;
-}
-
 .profile-form {
     max-width: 600px;
     margin: 0 auto;
@@ -308,7 +276,7 @@ body {
 .form-section h3 {
     font-size: 1.3rem;
     font-weight: 600;
-    color: black;
+    color: #333;
     margin-bottom: 20px;
     display: flex;
     align-items: center;
@@ -316,7 +284,7 @@ body {
 }
 
 .section-description {
-    color: black;
+    color: #666;
     font-size: 0.9rem;
     margin-bottom: 20px;
 }
@@ -388,7 +356,7 @@ body {
 
 .interest-text {
     font-weight: 500;
-    color: black;
+    color: #555;
     text-align: center;
 }
 
@@ -399,7 +367,7 @@ body {
 .preference-group h4 {
     font-size: 1.1rem;
     font-weight: 600;
-    color: black;
+    color: #333;
     margin-bottom: 15px;
 }
 
@@ -450,7 +418,7 @@ body {
 
 .radio-item span {
     font-weight: 500;
-    color: black;
+    color: #555;
 }
 
 /* Swipe Interface */
@@ -1060,7 +1028,6 @@ body {
 .income-inputs {
     margin-top: 20px;
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 12px;
     border-left: 4px solid #dc3545;
 }
@@ -1075,7 +1042,6 @@ body {
 .results-section {
     margin-top: 25px;
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 15px;
     border-left: 4px solid #dc3545;
 }
@@ -1134,12 +1100,10 @@ body {
 }
 
 .tip-card {
-    background: white;
     padding: 25px;
     border-radius: 15px;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .tip-card:hover {
@@ -1210,7 +1174,10 @@ body {
 .success-predictor-body .form-group label,
 .success-predictor-body .metrics-grid h4,
 .success-predictor-body .data-visualization h4,
-.success-predictor-body .chart-container h4 {
+.success-predictor-body .chart-container h4,
+.success-predictor-body .results-section h4,
+.success-predictor-body .tip-card h4,
+.success-predictor-body .tip-card p {
     color: white !important;
     font-weight: bold !important;
 }
@@ -1477,7 +1444,6 @@ body {
 
 .form-section {
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 15px;
     border-left: 4px solid #dc3545;
 }
@@ -1500,13 +1466,11 @@ body {
     align-items: center;
     gap: 15px;
     padding: 20px;
-    background: #f8f9fa;
     border-radius: 15px;
     transition: all 0.3s ease;
 }
 
 .metric-card:hover {
-    background: white;
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
@@ -1542,10 +1506,8 @@ body {
 }
 
 .chart-container {
-    background: white;
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .chart-container h4 {
