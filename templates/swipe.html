@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomieMatch - Find Your Match</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="swipe-body">
+    <div class="swipe-container">
+        <!-- Navigation -->
+        <nav class="swipe-nav">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>RoomieMatch</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('swipe') }}" class="nav-link active" title="Discover">
+                    <i class="fas fa-fire"></i>
+                    <span>Discover</span>
+                </a>
+                <a href="{{ url_for('matches') }}" class="nav-link" title="Matches">
+                    <i class="fas fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+                <a href="{{ url_for('rent_splitter') }}" class="nav-link" title="Rent Split">
+                    <i class="fas fa-calculator"></i>
+                    <span>Rent Split</span>
+                </a>
+                <a href="{{ url_for('chat_assistant') }}" class="nav-link" title="AI Assistant">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="{{ url_for('success_predictor') }}" class="nav-link" title="Predictor">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Predictor</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('logout') }}" class="nav-link logout" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Swipe Card -->
+        <div class="swipe-card-container">
+            <div class="swipe-card" id="swipeCard">
+                <div class="card-header">
+                    <div class="profile-image">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2>{{ match.name }}</h2>
+                        <p class="age-location">{{ match.age }} • {{ match.location }}</p>
+                        <p class="budget">Budget: ${{ match.budget }}/month</p>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    {% if match.bio %}
+                        <div class="bio-section">
+                            <h3>About</h3>
+                            <p>{{ match.bio }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if match.interests %}
+                        <div class="interests-section">
+                            <h3>Interests</h3>
+                            <div class="interests-tags">
+                                {% set interests_list = match.interests.strip('[]').replace("'", "").split(', ') %}
+                                {% for interest in interests_list %}
+                                    {% if interest %}
+                                        <span class="interest-tag">{{ interest }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if match.lifestyle_preferences %}
+                        <div class="lifestyle-section">
+                            <h3>Lifestyle</h3>
+                            <div class="lifestyle-tags">
+                                {% set lifestyle_list = match.lifestyle_preferences.strip('[]').replace("'", "").split(', ') %}
+                                {% for pref in lifestyle_list %}
+                                    {% if pref %}
+                                        <span class="lifestyle-tag">{{ pref }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Swipe Actions -->
+                <div class="swipe-actions">
+                    <button class="action-btn pass-btn" onclick="swipeAction('pass')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button class="action-btn like-btn" onclick="swipeAction('like')">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading/No more cards -->
+            <div class="no-more-cards" id="noMoreCards" style="display: none;">
+                <div class="no-more-content">
+                    <i class="fas fa-search"></i>
+                    <h3>No more profiles!</h3>
+                    <p>Check back later for new potential roommates</p>
+                    <a href="{{ url_for('matches') }}" class="btn btn-primary">View Matches</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let startX, startY, currentX, currentY;
+        let isDragging = false;
+        const card = document.getElementById('swipeCard');
+
+        // Touch events for mobile
+        card.addEventListener('touchstart', handleStart, { passive: false });
+        card.addEventListener('touchmove', handleMove, { passive: false });
+        card.addEventListener('touchend', handleEnd, { passive: false });
+
+        // Mouse events for desktop
+        card.addEventListener('mousedown', handleStart);
+        card.addEventListener('mousemove', handleMove);
+        card.addEventListener('mouseup', handleEnd);
+
+        function handleStart(e) {
+            isDragging = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            startX = clientX;
+            startY = clientY;
+            
+            card.style.transition = 'none';
+        }
+
+        function handleMove(e) {
+            if (!isDragging) return;
+            
+            e.preventDefault();
+            
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            currentX = clientX - startX;
+            currentY = clientY - startY;
+            
+            const rotation = currentX * 0.1;
+            const opacity = 1 - Math.abs(currentX) / 300;
+            
+            card.style.transform = `translateX(${currentX}px) translateY(${currentY}px) rotate(${rotation}deg)`;
+            card.style.opacity = opacity;
+            
+            // Change background color based on swipe direction
+            if (currentX > 50) {
+                card.style.backgroundColor = '#4CAF50';
+            } else if (currentX < -50) {
+                card.style.backgroundColor = '#f44336';
+            } else {
+                card.style.backgroundColor = '#fff';
+            }
+        }
+
+        function handleEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            card.style.transition = 'all 0.3s ease';
+            
+            const threshold = 100;
+            
+            if (Math.abs(currentX) > threshold) {
+                // Swipe action
+                const action = currentX > 0 ? 'like' : 'pass';
+                swipeAction(action);
+            } else {
+                // Return to center
+                card.style.transform = 'translateX(0) translateY(0) rotate(0deg)';
+                card.style.opacity = '1';
+                card.style.backgroundColor = '#fff';
+            }
+        }
+
+        function swipeAction(action) {
+            const card = document.getElementById('swipeCard');
+            
+            // Animate card out
+            const direction = action === 'like' ? 1 : -1;
+            card.style.transform = `translateX(${direction * 500}px) rotate(${direction * 30}deg)`;
+            card.style.opacity = '0';
+            
+            // Send request to server
+            fetch('/swipe_action', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    swiped_id: {{ match.user_id }},
+                    action: action
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show next card or no more cards message
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 300);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Reset card position on error
+                card.style.transform = 'translateX(0) translateY(0) rotate(0deg)';
+                card.style.opacity = '1';
+                card.style.backgroundColor = '#fff';
+            });
+        }
+
+        // Add some interactive animations
+        document.querySelectorAll('.interest-tag, .lifestyle-tag').forEach(tag => {
+            tag.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+            });
+            
+            tag.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

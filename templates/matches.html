@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomieMatch - Your Matches</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="matches-body">
+    <div class="matches-container">
+        <!-- Navigation -->
+        <nav class="swipe-nav">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>RoomieMatch</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('swipe') }}" class="nav-link" title="Discover">
+                    <i class="fas fa-fire"></i>
+                    <span>Discover</span>
+                </a>
+                <a href="{{ url_for('matches') }}" class="nav-link active" title="Matches">
+                    <i class="fas fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+                <a href="{{ url_for('rent_splitter') }}" class="nav-link" title="Rent Split">
+                    <i class="fas fa-calculator"></i>
+                    <span>Rent Split</span>
+                </a>
+                <a href="{{ url_for('chat_assistant') }}" class="nav-link" title="AI Assistant">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="{{ url_for('success_predictor') }}" class="nav-link" title="Predictor">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Predictor</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('logout') }}" class="nav-link logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="matches-content">
+            <div class="matches-header">
+                <h1><i class="fas fa-heart"></i> Your Matches</h1>
+                <p>People who liked you back!</p>
+            </div>
+
+            {% if matches %}
+                <div class="matches-grid">
+                    {% for match in matches %}
+                        <div class="match-card">
+                            <div class="match-header">
+                                <div class="profile-image">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div class="match-info">
+                                    {% if match.user1_id == session.user_id %}
+                                        <h3>{{ match.user2_name }}</h3>
+                                        <p class="location">{{ match.user2_location }}</p>
+                                    {% else %}
+                                        <h3>{{ match.user1_name }}</h3>
+                                        <p class="location">{{ match.user1_location }}</p>
+                                    {% endif %}
+                                    <p class="match-date">Matched {{ match.created_at.split(' ')[0] }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="match-content">
+                                {% if match.user1_id == session.user_id %}
+                                    {% if match.user2_bio %}
+                                        <p class="bio">{{ match.user2_bio }}</p>
+                                    {% endif %}
+                                {% else %}
+                                    {% if match.user1_bio %}
+                                        <p class="bio">{{ match.user1_bio }}</p>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+
+                            <div class="match-actions">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-comment"></i>
+                                    Start Chat
+                                </button>
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-info-circle"></i>
+                                    View Profile
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-matches">
+                    <div class="no-matches-content">
+                        <i class="fas fa-heart-broken"></i>
+                        <h3>No matches yet</h3>
+                        <p>Keep swiping to find your perfect roommate!</p>
+                        <a href="{{ url_for('swipe') }}" class="btn btn-primary">
+                            <i class="fas fa-fire"></i>
+                            Start Swiping
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive animations
+        document.querySelectorAll('.match-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+            });
+        });
+
+        // Add click animations to buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+    </script>
+</body>
+</html>

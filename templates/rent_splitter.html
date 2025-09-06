@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomieMatch - Smart Rent Splitter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="rent-splitter-body">
+    <div class="rent-splitter-container">
+        <!-- Navigation -->
+        <nav class="swipe-nav">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>RoomieMatch</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('swipe') }}" class="nav-link" title="Discover">
+                    <i class="fas fa-fire"></i>
+                    <span>Discover</span>
+                </a>
+                <a href="{{ url_for('matches') }}" class="nav-link" title="Matches">
+                    <i class="fas fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+                <a href="{{ url_for('rent_splitter') }}" class="nav-link active" title="Rent Split">
+                    <i class="fas fa-calculator"></i>
+                    <span>Rent Split</span>
+                </a>
+                <a href="{{ url_for('chat_assistant') }}" class="nav-link" title="AI Assistant">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="{{ url_for('success_predictor') }}" class="nav-link" title="Predictor">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Predictor</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('logout') }}" class="nav-link logout" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="rent-splitter-content">
+            <div class="page-header">
+                <h1><i class="fas fa-calculator"></i> Smart Rent Splitter & Expense Predictor</h1>
+                <p>AI-powered fair rent splitting and expense prediction</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Rent Splitter -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <i class="fas fa-home"></i>
+                        <h3>Smart Rent Splitter</h3>
+                    </div>
+                    <div class="feature-content">
+                        <form id="rentSplitForm" class="rent-form">
+                            <div class="form-group">
+                                <label for="totalRent">Total Monthly Rent ($)</label>
+                                <input type="number" id="totalRent" name="totalRent" min="500" max="10000" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="roommates">Number of Roommates</label>
+                                <input type="number" id="roommates" name="roommates" min="1" max="6" required>
+                            </div>
+                            
+                            <div class="split-methods">
+                                <h4>Split Method</h4>
+                                <div class="radio-group">
+                                    <label class="radio-item">
+                                        <input type="radio" name="splitMethod" value="equal" checked>
+                                        <span>Equal Split</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="splitMethod" value="roomSize">
+                                        <span>By Room Size</span>
+                                    </label>
+                                    <label class="radio-item">
+                                        <input type="radio" name="splitMethod" value="income">
+                                        <span>By Income</span>
+                                    </label>
+                                </div>
+                                
+                                <!-- Income input section (hidden by default) -->
+                                <div id="incomeInputs" class="income-inputs" style="display: none;">
+                                    <h5>Income Information</h5>
+                                    <div class="form-group">
+                                        <label for="yourIncome">Your Annual Income ($)</label>
+                                        <input type="number" id="yourIncome" name="yourIncome" min="20000" max="500000">
+                                    </div>
+                                    <div id="roommateIncomeInputs"></div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calculator"></i>
+                                Calculate Split
+                            </button>
+                        </form>
+                        
+                        <div id="rentResults" class="results-section" style="display: none;">
+                            <h4>Rent Split Results</h4>
+                            <div id="rentBreakdown"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expense Predictor -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>Expense Predictor</h3>
+                    </div>
+                    <div class="feature-content">
+                        <form id="expenseForm" class="expense-form">
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <select id="city" name="city" required>
+                                    <option value="">Select City</option>
+                                    <option value="new-york">New York, NY</option>
+                                    <option value="los-angeles">Los Angeles, CA</option>
+                                    <option value="chicago">Chicago, IL</option>
+                                    <option value="houston">Houston, TX</option>
+                                    <option value="phoenix">Phoenix, AZ</option>
+                                    <option value="philadelphia">Philadelphia, PA</option>
+                                    <option value="san-antonio">San Antonio, TX</option>
+                                    <option value="san-diego">San Diego, CA</option>
+                                    <option value="dallas">Dallas, TX</option>
+                                    <option value="san-jose">San Jose, CA</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lifestyle">Lifestyle Level</label>
+                                <select id="lifestyle" name="lifestyle" required>
+                                    <option value="">Select Lifestyle</option>
+                                    <option value="budget">Budget-Friendly</option>
+                                    <option value="moderate">Moderate</option>
+                                    <option value="comfortable">Comfortable</option>
+                                    <option value="luxury">Luxury</option>
+                                </select>
+                            </div>
+                            
+                            <div class="expense-categories">
+                                <h4>Include Categories</h4>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="utilities" checked>
+                                        <span>Utilities (Electric, Water, Gas)</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="groceries" checked>
+                                        <span>Groceries</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="transportation" checked>
+                                        <span>Transportation</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="internet">
+                                        <span>Internet & Cable</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" name="entertainment">
+                                        <span>Entertainment</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-chart-line"></i>
+                                Predict Expenses
+                            </button>
+                        </form>
+                        
+                        <div id="expenseResults" class="results-section" style="display: none;">
+                            <h4>Predicted Monthly Expenses</h4>
+                            <div id="expenseBreakdown"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Smart Tips</h3>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <i class="fas fa-balance-scale"></i>
+                        <h4>Fair Splitting</h4>
+                        <p>Consider room size, amenities, and usage when splitting rent fairly.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-piggy-bank"></i>
+                        <h4>Save Money</h4>
+                        <p>Track shared expenses to avoid conflicts and save on utilities.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-handshake"></i>
+                        <h4>Communication</h4>
+                        <p>Discuss financial expectations upfront to prevent misunderstandings.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Rent Splitter functionality
+        document.getElementById('rentSplitForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const totalRent = parseFloat(document.getElementById('totalRent').value);
+            const roommates = parseInt(document.getElementById('roommates').value);
+            const splitMethod = document.querySelector('input[name="splitMethod"]:checked').value;
+            
+            // Validation
+            if (!totalRent || totalRent <= 0) {
+                alert('Please enter a valid rent amount');
+                return;
+            }
+            
+            if (!roommates || roommates < 1 || roommates > 6) {
+                alert('Please enter a valid number of roommates (1-6)');
+                return;
+            }
+            
+            let results = [];
+            
+            if (splitMethod === 'equal') {
+                const totalPeople = roommates + 1; // Total people including you
+                const perPerson = totalRent / totalPeople;
+                
+                results.push({
+                    person: 'You',
+                    amount: perPerson.toFixed(2)
+                });
+                
+                for (let i = 1; i <= roommates; i++) {
+                    results.push({
+                        person: `Roommate ${i}`,
+                        amount: perPerson.toFixed(2)
+                    });
+                }
+            } else if (splitMethod === 'roomSize') {
+                // Room size-based splitting - more realistic approach
+                // Assume different room sizes: Master (40%), Large (30%), Standard (20%), Small (10%)
+                const totalPeople = roommates + 1;
+                
+                if (totalPeople === 2) {
+                    // 2 people: Master bedroom vs Standard room
+                    const masterShare = totalRent * 0.6; // 60% for master bedroom
+                    const standardShare = totalRent * 0.4; // 40% for standard room
+                    
+                    results = [
+                        { person: 'You (Master Bedroom)', amount: masterShare.toFixed(2) },
+                        { person: 'Roommate 1 (Standard Room)', amount: standardShare.toFixed(2) }
+                    ];
+                } else if (totalPeople === 3) {
+                    // 3 people: Master bedroom vs 2 standard rooms
+                    const masterShare = totalRent * 0.5; // 50% for master bedroom
+                    const standardShare = totalRent * 0.25; // 25% each for standard rooms
+                    
+                    results = [
+                        { person: 'You (Master Bedroom)', amount: masterShare.toFixed(2) },
+                        { person: 'Roommate 1 (Standard Room)', amount: standardShare.toFixed(2) },
+                        { person: 'Roommate 2 (Standard Room)', amount: standardShare.toFixed(2) }
+                    ];
+                } else {
+                    // 4+ people: More complex room distribution
+                    const masterShare = totalRent * 0.4; // 40% for master bedroom
+                    const remainingAmount = totalRent - masterShare;
+                    const perStandardRoom = remainingAmount / roommates;
+                    
+                    results = [
+                        { person: 'You (Master Bedroom)', amount: masterShare.toFixed(2) }
+                    ];
+                    
+                    for (let i = 1; i <= roommates; i++) {
+                        results.push({
+                            person: `Roommate ${i} (Standard Room)`,
+                            amount: perStandardRoom.toFixed(2)
+                        });
+                    }
+                }
+            } else if (splitMethod === 'income') {
+                // Income-based splitting using form inputs
+                const yourIncome = parseFloat(document.getElementById('yourIncome').value);
+                if (!yourIncome || isNaN(yourIncome)) {
+                    alert('Please enter your annual income');
+                    return;
+                }
+                
+                let totalIncome = yourIncome;
+                let roommateIncomes = [];
+                
+                for (let i = 1; i <= roommates; i++) {
+                    const roommateIncomeInput = document.getElementById(`roommateIncome${i}`);
+                    if (!roommateIncomeInput) {
+                        alert(`Please enter income for Roommate ${i}`);
+                        return;
+                    }
+                    const roommateIncome = parseFloat(roommateIncomeInput.value);
+                    if (!roommateIncome || isNaN(roommateIncome)) {
+                        alert(`Please enter a valid income for Roommate ${i}`);
+                        return;
+                    }
+                    roommateIncomes.push(roommateIncome);
+                    totalIncome += roommateIncome;
+                }
+                
+                const yourShare = (yourIncome / totalIncome) * totalRent;
+                results = [
+                    { person: 'You', amount: yourShare.toFixed(2) }
+                ];
+                
+                roommateIncomes.forEach((income, index) => {
+                    const share = (income / totalIncome) * totalRent;
+                    results.push({
+                        person: `Roommate ${index + 1}`,
+                        amount: share.toFixed(2)
+                    });
+                });
+            }
+            
+            displayRentResults(results);
+        });
+        
+        function displayRentResults(results) {
+            const resultsDiv = document.getElementById('rentResults');
+            const breakdownDiv = document.getElementById('rentBreakdown');
+            
+            // Calculate total to verify
+            const total = results.reduce((sum, result) => sum + parseFloat(result.amount), 0);
+            
+            let html = '<div class="breakdown-list">';
+            results.forEach(result => {
+                html += `
+                    <div class="breakdown-item">
+                        <span class="person">${result.person}</span>
+                        <span class="amount">$${result.amount}</span>
+                    </div>
+                `;
+            });
+            
+            // Add total verification with original rent amount
+            const originalRent = parseFloat(document.getElementById('totalRent').value);
+            html += `
+                <div class="breakdown-item total">
+                    <span class="person"><strong>Total</strong></span>
+                    <span class="amount"><strong>$${originalRent.toFixed(2)}</strong></span>
+                </div>
+            `;
+            html += '</div>';
+            
+            breakdownDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        // Expense Predictor functionality
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const city = document.getElementById('city').value;
+            const lifestyle = document.getElementById('lifestyle').value;
+            const categories = Array.from(document.querySelectorAll('input[name]:checked')).map(cb => cb.name);
+            
+            // Simulate expense prediction based on city and lifestyle
+            const expenseData = {
+                'new-york': { utilities: 150, groceries: 400, transportation: 200, internet: 80, entertainment: 300 },
+                'los-angeles': { utilities: 120, groceries: 350, transportation: 180, internet: 70, entertainment: 250 },
+                'chicago': { utilities: 100, groceries: 300, transportation: 120, internet: 60, entertainment: 200 },
+                'houston': { utilities: 80, groceries: 280, transportation: 100, internet: 55, entertainment: 180 },
+                'phoenix': { utilities: 90, groceries: 290, transportation: 110, internet: 58, entertainment: 190 }
+            };
+            
+            const baseExpenses = expenseData[city] || expenseData['chicago'];
+            const lifestyleMultipliers = {
+                'budget': 0.8,
+                'moderate': 1.0,
+                'comfortable': 1.3,
+                'luxury': 1.8
+            };
+            
+            const multiplier = lifestyleMultipliers[lifestyle] || 1.0;
+            
+            let totalExpenses = 0;
+            let breakdown = [];
+            
+            categories.forEach(category => {
+                if (baseExpenses[category]) {
+                    const amount = baseExpenses[category] * multiplier;
+                    totalExpenses += amount;
+                    breakdown.push({
+                        category: category.charAt(0).toUpperCase() + category.slice(1),
+                        amount: amount.toFixed(2)
+                    });
+                }
+            });
+            
+            displayExpenseResults(breakdown, totalExpenses.toFixed(2));
+        });
+        
+        function displayExpenseResults(breakdown, total) {
+            const resultsDiv = document.getElementById('expenseResults');
+            const breakdownDiv = document.getElementById('expenseBreakdown');
+            
+            let html = '<div class="breakdown-list">';
+            breakdown.forEach(item => {
+                html += `
+                    <div class="breakdown-item">
+                        <span class="category">${item.category}</span>
+                        <span class="amount">$${item.amount}</span>
+                    </div>
+                `;
+            });
+            html += `
+                <div class="breakdown-item total">
+                    <span class="category"><strong>Total Monthly</strong></span>
+                    <span class="amount"><strong>$${total}</strong></span>
+                </div>
+            `;
+            html += '</div>';
+            
+            breakdownDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        // Initialize the first radio button as selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstRadioItem = document.querySelector('.radio-item');
+            if (firstRadioItem) {
+                firstRadioItem.classList.add('selected');
+            }
+        });
+        
+        // Add interactive animations for radio buttons
+        document.querySelectorAll('.radio-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove selected class from all radio items in the same group
+                const radioGroup = this.parentElement;
+                radioGroup.querySelectorAll('.radio-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                // Add selected class to clicked item
+                this.classList.add('selected');
+                
+                // Also check the radio button
+                const radioInput = this.querySelector('input[type="radio"]');
+                if (radioInput) {
+                    radioInput.checked = true;
+                    
+                    // Show/hide income inputs based on selection
+                    const incomeInputs = document.getElementById('incomeInputs');
+                    if (radioInput.value === 'income') {
+                        incomeInputs.style.display = 'block';
+                        updateRoommateIncomeInputs();
+                    } else {
+                        incomeInputs.style.display = 'none';
+                    }
+                }
+            });
+        });
+        
+        // Update roommate income inputs when number of roommates changes
+        document.getElementById('roommates').addEventListener('change', function() {
+            const splitMethod = document.querySelector('input[name="splitMethod"]:checked');
+            if (splitMethod && splitMethod.value === 'income') {
+                updateRoommateIncomeInputs();
+            }
+        });
+        
+        function updateRoommateIncomeInputs() {
+            const roommates = parseInt(document.getElementById('roommates').value) || 0;
+            const container = document.getElementById('roommateIncomeInputs');
+            
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= roommates; i++) {
+                const div = document.createElement('div');
+                div.className = 'form-group';
+                div.innerHTML = `
+                    <label for="roommateIncome${i}">Roommate ${i} Annual Income ($)</label>
+                    <input type="number" id="roommateIncome${i}" name="roommateIncome${i}" min="20000" max="500000">
+                `;
+                container.appendChild(div);
+            }
+        }
+        
+        // Add interactive animations for checkbox items
+        document.querySelectorAll('.checkbox-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                
+                // Also toggle the checkbox
+                const checkboxInput = this.querySelector('input[type="checkbox"]');
+                if (checkboxInput) {
+                    checkboxInput.checked = !checkboxInput.checked;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

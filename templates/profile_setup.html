@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomieMatch - Complete Your Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="profile-setup-body">
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="logo">
+                    <i class="fas fa-home"></i>
+                    <h1>RoomieMatch</h1>
+                </div>
+                <h2>Complete Your Profile</h2>
+                <p>Help us find your perfect roommate match</p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="profile-form">
+                <!-- Basic Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> Basic Information</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" id="age" name="age" min="18" max="100" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="budget">Monthly Budget ($)</label>
+                            <input type="number" id="budget" name="budget" min="300" max="5000" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="location">Preferred Location</label>
+                            <input type="text" id="location" name="location" placeholder="e.g., Downtown, Midtown" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bio">Tell us about yourself</label>
+                        <textarea id="bio" name="bio" rows="4" placeholder="Share your hobbies, lifestyle, and what you're looking for in a roommate..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Interests -->
+                <div class="form-section">
+                    <h3><i class="fas fa-heart"></i> Your Interests</h3>
+                    <p class="section-description">Select all that apply to help us find compatible roommates</p>
+                    
+                    <div class="interests-grid">
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_music" value="Music">
+                            <span class="interest-icon">🎵</span>
+                            <span class="interest-text">Music</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_sports" value="Sports">
+                            <span class="interest-icon">⚽</span>
+                            <span class="interest-text">Sports</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_gaming" value="Gaming">
+                            <span class="interest-icon">🎮</span>
+                            <span class="interest-text">Gaming</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_cooking" value="Cooking">
+                            <span class="interest-icon">👨‍🍳</span>
+                            <span class="interest-text">Cooking</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_reading" value="Reading">
+                            <span class="interest-icon">📚</span>
+                            <span class="interest-text">Reading</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_travel" value="Travel">
+                            <span class="interest-icon">✈️</span>
+                            <span class="interest-text">Travel</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_fitness" value="Fitness">
+                            <span class="interest-icon">💪</span>
+                            <span class="interest-text">Fitness</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_art" value="Art">
+                            <span class="interest-icon">🎨</span>
+                            <span class="interest-text">Art</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_movies" value="Movies">
+                            <span class="interest-icon">🎬</span>
+                            <span class="interest-text">Movies</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_photography" value="Photography">
+                            <span class="interest-icon">📸</span>
+                            <span class="interest-text">Photography</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_technology" value="Technology">
+                            <span class="interest-icon">💻</span>
+                            <span class="interest-text">Technology</span>
+                        </label>
+                        
+                        <label class="interest-item">
+                            <input type="checkbox" name="interest_nature" value="Nature">
+                            <span class="interest-icon">🌿</span>
+                            <span class="interest-text">Nature</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Lifestyle Preferences -->
+                <div class="form-section">
+                    <h3><i class="fas fa-home"></i> Lifestyle Preferences</h3>
+                    <p class="section-description">Help us understand your living style</p>
+                    
+                    <div class="preference-group">
+                        <h4>Sleep Schedule</h4>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_sleep" value="Early Bird">
+                                <span>Early Bird (10 PM - 6 AM)</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_sleep" value="Night Owl">
+                                <span>Night Owl (12 AM - 8 AM)</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_sleep" value="Flexible">
+                                <span>Flexible</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-group">
+                        <h4>Social Level</h4>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_social" value="Very Social">
+                                <span>Very Social</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_social" value="Moderately Social">
+                                <span>Moderately Social</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_social" value="Quiet">
+                                <span>Quiet/Private</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-group">
+                        <h4>Cleanliness</h4>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_clean" value="Very Clean">
+                                <span>Very Clean</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_clean" value="Moderately Clean">
+                                <span>Moderately Clean</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_clean" value="Relaxed">
+                                <span>Relaxed</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="preference-group">
+                        <h4>Pet Preference</h4>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_pets" value="Love Pets">
+                                <span>Love Pets</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_pets" value="Neutral">
+                                <span>Neutral</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="lifestyle_pets" value="No Pets">
+                                <span>No Pets</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">
+                    <i class="fas fa-check"></i>
+                    Complete Profile
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive animations
+        document.querySelectorAll('.interest-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+
+        document.querySelectorAll('.radio-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove selected class from siblings
+                this.parentElement.querySelectorAll('.radio-item').forEach(sibling => {
+                    sibling.classList.remove('selected');
+                });
+                // Add selected class to clicked item
+                this.classList.add('selected');
+            });
+        });
+
+        // Form validation
+        document.querySelector('.profile-form').addEventListener('submit', function(e) {
+            const interests = document.querySelectorAll('input[name^="interest_"]:checked');
+            const lifestyle = document.querySelectorAll('input[name^="lifestyle_"]:checked');
+            
+            if (interests.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one interest!');
+                return;
+            }
+            
+            if (lifestyle.length < 4) {
+                e.preventDefault();
+                alert('Please answer all lifestyle preference questions!');
+                return;
+            }
+        });
+    </script>
+</body>
+</html>

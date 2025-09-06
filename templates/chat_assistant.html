@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomieMatch - AI Chat Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="chat-assistant-body">
+    <div class="chat-assistant-container">
+        <!-- Navigation -->
+        <nav class="swipe-nav">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>RoomieMatch</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('swipe') }}" class="nav-link" title="Discover">
+                    <i class="fas fa-fire"></i>
+                    <span>Discover</span>
+                </a>
+                <a href="{{ url_for('matches') }}" class="nav-link" title="Matches">
+                    <i class="fas fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+                <a href="{{ url_for('rent_splitter') }}" class="nav-link" title="Rent Split">
+                    <i class="fas fa-calculator"></i>
+                    <span>Rent Split</span>
+                </a>
+                <a href="{{ url_for('chat_assistant') }}" class="nav-link active" title="AI Assistant">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="{{ url_for('success_predictor') }}" class="nav-link" title="Predictor">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Predictor</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('logout') }}" class="nav-link logout" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="chat-assistant-content">
+            <div class="page-header">
+                <h1><i class="fas fa-robot"></i> AI-Powered Chat Assistant</h1>
+                <p>Your smart roommate assistant for smoother shared living</p>
+            </div>
+
+            <div class="chat-features">
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="action-btn" onclick="sendQuickMessage('Help me create a cleaning schedule')">
+                            <i class="fas fa-broom"></i>
+                            <span>Cleaning Schedule</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Suggest a cooking rotation')">
+                            <i class="fas fa-utensils"></i>
+                            <span>Cooking Rotation</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Help resolve a conflict about noise')">
+                            <i class="fas fa-volume-down"></i>
+                            <span>Noise Issues</span>
+                        </button>
+                        <button class="action-btn" onclick="sendQuickMessage('Create house rules')">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>House Rules</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Interface -->
+                <div class="chat-interface">
+                    <div class="chat-header">
+                        <div class="ai-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="ai-info">
+                            <h3>RoomieBot</h3>
+                            <p>Your AI roommate assistant</p>
+                        </div>
+                        <div class="chat-status">
+                            <span class="status-indicator online"></span>
+                            <span>Online</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <div class="message-content">
+                                <p>Hi! I'm RoomieBot, your AI assistant for shared living. I can help you with:</p>
+                                <ul>
+                                    <li>Creating cleaning schedules</li>
+                                    <li>Suggesting cooking rotations</li>
+                                    <li>Mediating small conflicts</li>
+                                    <li>Setting up house rules</li>
+                                    <li>Coordinating chores</li>
+                                </ul>
+                                <p>How can I help you today?</p>
+                            </div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-input">
+                        <form id="chatForm" class="input-form">
+                            <div class="input-group">
+                                <input type="text" id="messageInput" placeholder="Ask RoomieBot anything about shared living..." required>
+                                <button type="submit" class="send-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Help Topics -->
+                <div class="help-topics">
+                    <h3><i class="fas fa-question-circle"></i> Popular Topics</h3>
+                    <div class="topics-grid">
+                        <div class="topic-card" onclick="sendQuickMessage('How do I create a fair cleaning schedule?')">
+                            <i class="fas fa-calendar-alt"></i>
+                            <h4>Scheduling</h4>
+                            <p>Create fair schedules for cleaning, cooking, and chores</p>
+                        </div>
+                        <div class="topic-card" onclick="sendQuickMessage('How can I resolve conflicts with my roommate?')">
+                            <i class="fas fa-handshake"></i>
+                            <h4>Conflict Resolution</h4>
+                            <p>Get advice on handling roommate disagreements</p>
+                        </div>
+                        <div class="topic-card" onclick="sendQuickMessage('What are good house rules to establish?')">
+                            <i class="fas fa-gavel"></i>
+                            <h4>House Rules</h4>
+                            <p>Establish clear guidelines for shared living</p>
+                        </div>
+                        <div class="topic-card" onclick="sendQuickMessage('How do I split expenses fairly?')">
+                            <i class="fas fa-dollar-sign"></i>
+                            <h4>Expense Splitting</h4>
+                            <p>Learn about fair ways to split shared costs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chat functionality
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const messageInput = document.getElementById('messageInput');
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const message = messageInput.value.trim();
+            if (message) {
+                addUserMessage(message);
+                messageInput.value = '';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiResponse = generateAIResponse(message);
+                    addAIMessage(aiResponse);
+                }, 1000);
+            }
+        });
+
+        function addUserMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${message}</p>
+                </div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function addAIMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${message}</p>
+                </div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function sendQuickMessage(message) {
+            messageInput.value = message;
+            chatForm.dispatchEvent(new Event('submit'));
+        }
+
+        function generateAIResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            // Simple AI responses based on keywords
+            if (message.includes('cleaning') || message.includes('schedule')) {
+                return `Great question! Here's a fair cleaning schedule I recommend:
+
+**Weekly Rotation:**
+- Week 1: Kitchen & Common Areas
+- Week 2: Bathroom & Trash
+- Week 3: Living Room & Vacuuming
+- Week 4: Deep Clean & Organization
+
+**Daily Tasks:**
+- Everyone cleans their own dishes immediately
+- Wipe down kitchen counters after cooking
+- Keep personal items in your room
+
+Would you like me to customize this schedule for your specific situation?`;
+            }
+            
+            if (message.includes('cooking') || message.includes('meal')) {
+                return `Here's a cooking rotation that works well:
+
+**Option 1: Weekly Rotation**
+- Each person cooks 2-3 meals per week
+- Rotate who shops for groceries
+- Share meal planning responsibilities
+
+**Option 2: Shared Meals**
+- Cook together 2-3 times per week
+- Split grocery costs equally
+- Take turns choosing recipes
+
+**Tips:**
+- Discuss dietary restrictions upfront
+- Set a grocery budget together
+- Clean up immediately after cooking
+
+Would you like me to help you set up a specific cooking schedule?`;
+            }
+            
+            if (message.includes('conflict') || message.includes('problem') || message.includes('issue')) {
+                return `I'm here to help mediate! Here's my approach to conflict resolution:
+
+**Step 1: Stay Calm**
+- Take a deep breath before responding
+- Avoid accusatory language
+- Focus on the issue, not the person
+
+**Step 2: Communicate Clearly**
+- Use "I feel" statements
+- Be specific about the problem
+- Listen actively to their perspective
+
+**Step 3: Find Compromise**
+- Look for win-win solutions
+- Be willing to meet halfway
+- Set clear boundaries going forward
+
+**Step 4: Follow Up**
+- Check in after a few days
+- Adjust solutions if needed
+- Celebrate successful resolutions
+
+What specific conflict would you like help with?`;
+            }
+            
+            if (message.includes('rule') || message.includes('guideline')) {
+                return `Here are essential house rules that promote harmony:
+
+**Common Areas:**
+- Clean up after yourself immediately
+- No personal items in shared spaces
+- Respect quiet hours (10 PM - 7 AM)
+
+**Kitchen:**
+- Wash dishes within 2 hours
+- Label your food in the fridge
+- Take turns buying shared items
+
+**Bathroom:**
+- Keep personal items in your room
+- Clean up after showering
+- Replace toilet paper when empty
+
+**Guests:**
+- Give 24-hour notice for overnight guests
+- Limit guests to 2 nights per week
+- Ensure guests follow house rules
+
+**Communication:**
+- Use group chat for house updates
+- Address issues promptly and respectfully
+- Hold monthly house meetings
+
+Would you like me to customize these rules for your specific situation?`;
+            }
+            
+            if (message.includes('expense') || message.includes('money') || message.includes('split')) {
+                return `Here's how to split expenses fairly:
+
+**Rent & Utilities:**
+- Split rent by room size or equally
+- Share utility bills equally
+- Use apps like Splitwise for tracking
+
+**Groceries:**
+- Create shared grocery fund
+- Take turns shopping
+- Keep receipts for shared items
+
+**Common Items:**
+- Split cleaning supplies equally
+- Share internet and streaming services
+- Discuss large purchases together
+
+**Tips:**
+- Set up automatic transfers
+- Review expenses monthly
+- Be transparent about costs
+
+Would you like me to help you set up a specific expense tracking system?`;
+            }
+            
+            // Default response
+            return `I understand you're asking about "${userMessage}". I'm here to help with all aspects of shared living! 
+
+I can assist with:
+- Creating fair schedules and rotations
+- Resolving conflicts peacefully
+- Setting up house rules
+- Managing shared expenses
+- Coordinating chores and responsibilities
+
+Could you be more specific about what you'd like help with? I'm here to make your shared living experience smoother and more enjoyable!`;
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Add typing indicator
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message ai-message typing';
+            typingDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        // Add interactive animations
+        document.querySelectorAll('.action-btn, .topic-card').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

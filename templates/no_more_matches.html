@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomieMatch - No More Profiles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="no-matches-body">
+    <div class="no-matches-container">
+        <!-- Navigation -->
+        <nav class="swipe-nav">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>RoomieMatch</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('swipe') }}" class="nav-link active" title="Discover">
+                    <i class="fas fa-fire"></i>
+                    <span>Discover</span>
+                </a>
+                <a href="{{ url_for('matches') }}" class="nav-link" title="Matches">
+                    <i class="fas fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+                <a href="{{ url_for('rent_splitter') }}" class="nav-link" title="Rent Split">
+                    <i class="fas fa-calculator"></i>
+                    <span>Rent Split</span>
+                </a>
+                <a href="{{ url_for('chat_assistant') }}" class="nav-link" title="AI Assistant">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="{{ url_for('success_predictor') }}" class="nav-link" title="Predictor">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Predictor</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('logout') }}" class="nav-link logout" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="no-matches-content">
+            <div class="no-matches-card">
+                <!-- Search Icon + Text in Flexbox -->
+                <div class="no-matches-header">
+                    <div class="no-matches-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="no-matches-text">
+                        <h2>No More Profiles!</h2>
+                        <p>You've seen all available potential roommates in your area.</p>
+                        <p>Check back later for new profiles, or try expanding your search criteria.</p>
+                    </div>
+                </div>
+                
+                <div class="no-matches-actions">
+                    <a href="{{ url_for('matches') }}" class="btn btn-primary">
+                        <i class="fas fa-heart"></i>
+                        View Your Matches
+                    </a>
+                    <button onclick="resetProfiles()" class="btn btn-secondary">
+                        <i class="fas fa-undo"></i>
+                        Reset & Start Over
+                    </button>
+                    <button onclick="window.location.reload()" class="btn btn-outline">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some animation to the icon
+        document.querySelector('.no-matches-icon i').style.animation = 'pulse 2s infinite';
+        
+        // Reset profiles function
+        function resetProfiles() {
+            if (confirm('Are you sure you want to reset and see all profiles again? This will clear your swipe history.')) {
+                // Show loading state
+                const resetBtn = document.querySelector('button[onclick="resetProfiles()"]');
+                const originalText = resetBtn.innerHTML;
+                resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+                resetBtn.disabled = true;
+                
+                // Send reset request to server
+                fetch('/reset_profiles', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Redirect to swipe page
+                        window.location.href = '{{ url_for("swipe") }}';
+                    } else {
+                        alert('Error resetting profiles. Please try again.');
+                        resetBtn.innerHTML = originalText;
+                        resetBtn.disabled = false;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error resetting profiles. Please try again.');
+                    resetBtn.innerHTML = originalText;
+                    resetBtn.disabled = false;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoomieMatch - Success Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="success-predictor-body">
+    <div class="success-predictor-container">
+        <!-- Navigation -->
+        <nav class="swipe-nav">
+            <div class="nav-logo">
+                <i class="fas fa-home"></i>
+                <span>RoomieMatch</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('swipe') }}" class="nav-link" title="Discover">
+                    <i class="fas fa-fire"></i>
+                    <span>Discover</span>
+                </a>
+                <a href="{{ url_for('matches') }}" class="nav-link" title="Matches">
+                    <i class="fas fa-heart"></i>
+                    <span>Matches</span>
+                </a>
+                <a href="{{ url_for('rent_splitter') }}" class="nav-link" title="Rent Split">
+                    <i class="fas fa-calculator"></i>
+                    <span>Rent Split</span>
+                </a>
+                <a href="{{ url_for('chat_assistant') }}" class="nav-link" title="AI Assistant">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="{{ url_for('success_predictor') }}" class="nav-link active" title="Predictor">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Predictor</span>
+                </a>
+            </div>
+            <div class="nav-actions">
+                <a href="{{ url_for('logout') }}" class="nav-link logout" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </nav>
+
+        <div class="success-predictor-content">
+            <div class="page-header">
+                <h1><i class="fas fa-chart-line"></i> Roommate Success Predictor</h1>
+                <p>AI-powered compatibility analysis for long-term roommate success</p>
+            </div>
+
+            <div class="predictor-features">
+                <!-- Compatibility Analysis -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <i class="fas fa-brain"></i>
+                        <h3>Compatibility Analysis</h3>
+                    </div>
+                    <div class="feature-content">
+                        <form id="compatibilityForm" class="compatibility-form">
+                            <div class="form-section">
+                                <h4>Your Profile</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="yourAge">Your Age</label>
+                                        <input type="number" id="yourAge" name="yourAge" min="18" max="100" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="yourBudget">Your Budget</label>
+                                        <input type="number" id="yourBudget" name="yourBudget" min="300" max="5000" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="yourLocation">Your Location</label>
+                                    <input type="text" id="yourLocation" name="yourLocation" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="yourLifestyle">Your Lifestyle</label>
+                                    <select id="yourLifestyle" name="yourLifestyle" required>
+                                        <option value="">Select Lifestyle</option>
+                                        <option value="night-owl">Night Owl</option>
+                                        <option value="early-bird">Early Bird</option>
+                                        <option value="flexible">Flexible</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="yourCleanliness">Cleanliness Level</label>
+                                    <select id="yourCleanliness" name="yourCleanliness" required>
+                                        <option value="">Select Level</option>
+                                        <option value="very-clean">Very Clean</option>
+                                        <option value="moderately-clean">Moderately Clean</option>
+                                        <option value="relaxed">Relaxed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-section">
+                                <h4>Potential Roommate</h4>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="roommateAge">Roommate Age</label>
+                                        <input type="number" id="roommateAge" name="roommateAge" min="18" max="100" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="roommateBudget">Roommate Budget</label>
+                                        <input type="number" id="roommateBudget" name="roommateBudget" min="300" max="5000" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="roommateLocation">Roommate Location</label>
+                                    <input type="text" id="roommateLocation" name="roommateLocation" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="roommateLifestyle">Roommate Lifestyle</label>
+                                    <select id="roommateLifestyle" name="roommateLifestyle" required>
+                                        <option value="">Select Lifestyle</option>
+                                        <option value="night-owl">Night Owl</option>
+                                        <option value="early-bird">Early Bird</option>
+                                        <option value="flexible">Flexible</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="roommateCleanliness">Roommate Cleanliness</label>
+                                    <select id="roommateCleanliness" name="roommateCleanliness" required>
+                                        <option value="">Select Level</option>
+                                        <option value="very-clean">Very Clean</option>
+                                        <option value="moderately-clean">Moderately Clean</option>
+                                        <option value="relaxed">Relaxed</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-chart-line"></i>
+                                Analyze Compatibility
+                            </button>
+                        </form>
+                        
+                        <div id="compatibilityResults" class="results-section" style="display: none;">
+                            <h4>Compatibility Analysis</h4>
+                            <div id="compatibilityBreakdown"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Success Metrics -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Success Metrics</h3>
+                    </div>
+                    <div class="feature-content">
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="metric-info">
+                                    <h4>Duration Prediction</h4>
+                                    <p>How long the roommate relationship is likely to last</p>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <div class="metric-info">
+                                    <h4>Harmony Score</h4>
+                                    <p>Likelihood of peaceful cohabitation</p>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="metric-info">
+                                    <h4>Risk Factors</h4>
+                                    <p>Potential areas of conflict</p>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="metric-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div class="metric-info">
+                                    <h4>Recommendations</h4>
+                                    <p>Tips for successful cohabitation</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Historical Data -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <i class="fas fa-database"></i>
+                        <h3>Historical Success Data</h3>
+                    </div>
+                    <div class="feature-content">
+                        <div class="data-visualization">
+                            <div class="chart-container">
+                                <h4>Success Rate by Age Difference</h4>
+                                <div class="chart-bar">
+                                    <div class="bar" style="width: 85%;">
+                                        <span>0-2 years: 85%</span>
+                                    </div>
+                                    <div class="bar" style="width: 72%;">
+                                        <span>3-5 years: 72%</span>
+                                    </div>
+                                    <div class="bar" style="width: 58%;">
+                                        <span>6-10 years: 58%</span>
+                                    </div>
+                                    <div class="bar" style="width: 45%;">
+                                        <span>10+ years: 45%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="chart-container">
+                                <h4>Success Rate by Budget Difference</h4>
+                                <div class="chart-bar">
+                                    <div class="bar" style="width: 90%;">
+                                        <span>0-100: 90%</span>
+                                    </div>
+                                    <div class="bar" style="width: 78%;">
+                                        <span>101-200: 78%</span>
+                                    </div>
+                                    <div class="bar" style="width: 65%;">
+                                        <span>201-300: 65%</span>
+                                    </div>
+                                    <div class="bar" style="width: 52%;">
+                                        <span>300+: 52%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Section -->
+            <div class="tips-section">
+                <h3><i class="fas fa-lightbulb"></i> Success Tips</h3>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <i class="fas fa-comments"></i>
+                        <h4>Communication</h4>
+                        <p>Open, honest communication is the foundation of successful roommate relationships.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-balance-scale"></i>
+                        <h4>Compromise</h4>
+                        <p>Be willing to compromise on preferences to maintain harmony.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-calendar-check"></i>
+                        <h4>Boundaries</h4>
+                        <p>Set clear boundaries and respect each other's personal space.</p>
+                    </div>
+                    <div class="tip-card">
+                        <i class="fas fa-handshake"></i>
+                        <h4>Respect</h4>
+                        <p>Mutual respect for differences leads to long-term success.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Compatibility Analysis functionality
+        document.getElementById('compatibilityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Calculate compatibility score
+            const compatibilityScore = calculateCompatibilityScore(data);
+            
+            // Display results
+            displayCompatibilityResults(compatibilityScore, data);
+        });
+        
+        function calculateCompatibilityScore(data) {
+            let score = 0;
+            let factors = [];
+            
+            // Age compatibility (0-25 points)
+            const ageDiff = Math.abs(parseInt(data.yourAge) - parseInt(data.roommateAge));
+            if (ageDiff <= 2) {
+                score += 25;
+                factors.push({ factor: 'Age Compatibility', score: 25, max: 25, description: 'Very similar ages' });
+            } else if (ageDiff <= 5) {
+                score += 20;
+                factors.push({ factor: 'Age Compatibility', score: 20, max: 25, description: 'Similar age range' });
+            } else if (ageDiff <= 10) {
+                score += 15;
+                factors.push({ factor: 'Age Compatibility', score: 15, max: 25, description: 'Moderate age difference' });
+            } else {
+                score += 10;
+                factors.push({ factor: 'Age Compatibility', score: 10, max: 25, description: 'Significant age difference' });
+            }
+            
+            // Budget compatibility (0-25 points)
+            const budgetDiff = Math.abs(parseInt(data.yourBudget) - parseInt(data.roommateBudget));
+            if (budgetDiff <= 100) {
+                score += 25;
+                factors.push({ factor: 'Budget Compatibility', score: 25, max: 25, description: 'Very similar budgets' });
+            } else if (budgetDiff <= 200) {
+                score += 20;
+                factors.push({ factor: 'Budget Compatibility', score: 20, max: 25, description: 'Similar budget range' });
+            } else if (budgetDiff <= 300) {
+                score += 15;
+                factors.push({ factor: 'Budget Compatibility', score: 15, max: 25, description: 'Moderate budget difference' });
+            } else {
+                score += 10;
+                factors.push({ factor: 'Budget Compatibility', score: 10, max: 25, description: 'Significant budget difference' });
+            }
+            
+            // Location compatibility (0-20 points)
+            if (data.yourLocation.toLowerCase() === data.roommateLocation.toLowerCase()) {
+                score += 20;
+                factors.push({ factor: 'Location Compatibility', score: 20, max: 20, description: 'Same location preference' });
+            } else {
+                score += 10;
+                factors.push({ factor: 'Location Compatibility', score: 10, max: 20, description: 'Different location preferences' });
+            }
+            
+            // Lifestyle compatibility (0-20 points)
+            if (data.yourLifestyle === data.roommateLifestyle) {
+                score += 20;
+                factors.push({ factor: 'Lifestyle Compatibility', score: 20, max: 20, description: 'Matching lifestyle preferences' });
+            } else if (data.yourLifestyle === 'flexible' || data.roommateLifestyle === 'flexible') {
+                score += 15;
+                factors.push({ factor: 'Lifestyle Compatibility', score: 15, max: 20, description: 'One person is flexible' });
+            } else {
+                score += 5;
+                factors.push({ factor: 'Lifestyle Compatibility', score: 5, max: 20, description: 'Conflicting lifestyle preferences' });
+            }
+            
+            // Cleanliness compatibility (0-10 points)
+            if (data.yourCleanliness === data.roommateCleanliness) {
+                score += 10;
+                factors.push({ factor: 'Cleanliness Compatibility', score: 10, max: 10, description: 'Matching cleanliness standards' });
+            } else if (data.yourCleanliness === 'moderately-clean' || data.roommateCleanliness === 'moderately-clean') {
+                score += 7;
+                factors.push({ factor: 'Cleanliness Compatibility', score: 7, max: 10, description: 'Moderate compatibility' });
+            } else {
+                score += 3;
+                factors.push({ factor: 'Cleanliness Compatibility', score: 3, max: 10, description: 'Different cleanliness standards' });
+            }
+            
+            // Calculate success probability
+            const successProbability = Math.min(95, Math.max(30, score));
+            const durationMonths = Math.min(24, Math.max(3, Math.round(score / 4)));
+            
+            return {
+                totalScore: score,
+                maxScore: 100,
+                successProbability: successProbability,
+                durationMonths: durationMonths,
+                factors: factors
+            };
+        }
+        
+        function displayCompatibilityResults(results, data) {
+            const resultsDiv = document.getElementById('compatibilityResults');
+            const breakdownDiv = document.getElementById('compatibilityBreakdown');
+            
+            const successLevel = results.successProbability >= 80 ? 'High' : 
+                               results.successProbability >= 60 ? 'Medium' : 'Low';
+            const successColor = results.successProbability >= 80 ? '#28a745' : 
+                               results.successProbability >= 60 ? '#ffc107' : '#dc3545';
+            
+            let html = `
+                <div class="compatibility-summary">
+                    <div class="score-display">
+                        <div class="score-circle" style="border-color: ${successColor};">
+                            <span class="score-number">${results.successProbability}%</span>
+                            <span class="score-label">Success Rate</span>
+                        </div>
+                    </div>
+                    <div class="summary-info">
+                        <h5>Compatibility Level: <span style="color: ${successColor};">${successLevel}</span></h5>
+                        <p>Predicted Duration: <strong>${results.durationMonths} months</strong></p>
+                        <p>Overall Score: <strong>${results.totalScore}/100</strong></p>
+                    </div>
+                </div>
+                
+                <div class="factors-breakdown">
+                    <h5>Detailed Analysis</h5>
+            `;
+            
+            results.factors.forEach(factor => {
+                const percentage = Math.round((factor.score / factor.max) * 100);
+                const color = percentage >= 80 ? '#28a745' : percentage >= 60 ? '#ffc107' : '#dc3545';
+                
+                html += `
+                    <div class="factor-item">
+                        <div class="factor-header">
+                            <span class="factor-name">${factor.factor}</span>
+                            <span class="factor-score">${factor.score}/${factor.max}</span>
+                        </div>
+                        <div class="factor-bar">
+                            <div class="factor-progress" style="width: ${percentage}%; background-color: ${color};"></div>
+                        </div>
+                        <p class="factor-description">${factor.description}</p>
+                    </div>
+                `;
+            });
+            
+            html += `
+                </div>
+                
+                <div class="recommendations">
+                    <h5>Recommendations</h5>
+                    <ul>
+            `;
+            
+            if (results.successProbability >= 80) {
+                html += `
+                    <li>Excellent match! This roommate relationship has high potential for success.</li>
+                    <li>Focus on maintaining open communication and setting clear boundaries.</li>
+                    <li>Consider creating a roommate agreement to formalize expectations.</li>
+                `;
+            } else if (results.successProbability >= 60) {
+                html += `
+                    <li>Good potential with some areas to address.</li>
+                    <li>Discuss differences openly and find compromises.</li>
+                    <li>Set up regular check-ins to address any issues early.</li>
+                `;
+            } else {
+                html += `
+                    <li>This match may face challenges. Consider if differences are manageable.</li>
+                    <li>Have honest conversations about expectations before committing.</li>
+                    <li>Consider shorter-term arrangements to test compatibility.</li>
+                `;
+            }
+            
+            html += `
+                    </ul>
+                </div>
+            `;
+            
+            breakdownDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        // Add interactive animations
+        document.querySelectorAll('.metric-card, .tip-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+            });
+        });
+    </script>
+</body>
+</html>

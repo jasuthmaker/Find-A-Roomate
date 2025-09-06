@@ -10,6 +10,9 @@ A simple, modern roommate finder app built with Python Flask.
 - 🧠 Smart matching algorithm
 - 💕 Mutual matching system
 - 📱 Responsive design with red theme
+- 🧮 **Smart Rent Splitter & Expense Predictor**
+- 🤖 **AI-Powered Chat Assistant**
+- 📊 **Roommate Success Predictor**
 
 ## Quick Start
 
@@ -48,6 +51,10 @@ A simple, modern roommate finder app built with Python Flask.
 2. **Complete Profile** - Add your interests and lifestyle preferences
 3. **Start Swiping** - Swipe right to like, left to pass
 4. **View Matches** - See mutual matches
+5. **Smart Rent Splitter** - Calculate fair rent splitting based on room size, income, or equal split
+6. **Expense Predictor** - Predict monthly expenses using local city data
+7. **AI Chat Assistant** - Get help with chores, schedules, and conflict resolution
+8. **Success Predictor** - Analyze compatibility for long-term roommate success
 
 ## Project Structure
 
@@ -61,7 +68,10 @@ Find-A-Roomate/
     ├── profile_setup.html
     ├── swipe.html
     ├── matches.html
-    └── no_more_matches.html
+    ├── no_more_matches.html
+    ├── rent_splitter.html
+    ├── chat_assistant.html
+    └── success_predictor.html
 ```
 
 ## Technology Stack
