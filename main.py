@@ -4,7 +4,8 @@ import random
 import requests
 import os
 import json
-from firebase_config import firebase_service
+# from firebase_config import firebase_service  # Temporarily disabled due to JWT signature issues
+from firebase_rest_service import firebase_rest_service as firebase_service
 
 app = Flask(__name__)
 app.secret_key = 'roommate-finder-secret-key-change-in-production'

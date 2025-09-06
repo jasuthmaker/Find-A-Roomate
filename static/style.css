@@ -153,7 +153,7 @@ body {
 
 .btn-secondary {
     background: #f8f9fa;
-    color: #666;
+    color: #e4d9d9;
     border: 2px solid #e1e5e9;
 }
 
@@ -290,6 +290,36 @@ body {
     color: black !important;
 }
 
+/* Profile form - make all text elements dark black for better visibility */
+.profile-form .form-section h3,
+.profile-form .section-description,
+.profile-form .interest-text,
+.profile-form .radio-item span,
+.profile-form .checkbox-item span,
+.profile-form .form-group label,
+.profile-form .form-group input,
+.profile-form .form-group textarea,
+.profile-form .form-group select,
+.profile-form .form-group input::placeholder,
+.profile-form .form-group textarea::placeholder {
+    color: black !important;
+}
+
+.profile-form .form-group input,
+.profile-form .form-group textarea,
+.profile-form .form-group select {
+    border-color: #ccc !important;
+    background-color: #f8f9fa !important;
+}
+
+.profile-form .form-group input:focus,
+.profile-form .form-group textarea:focus,
+.profile-form .form-group select:focus {
+    border-color: #dc3545 !important;
+    background-color: white !important;
+    color: black !important;
+}
+
 .profile-form {
     max-width: 600px;
     margin: 0 auto;
@@ -401,6 +431,11 @@ body {
     font-weight: 600;
     color: black;
     margin-bottom: 15px;
+}
+
+/* Ensure all text elements within preference-group are black */
+.preference-group * {
+    color: black !important;
 }
 
 .radio-group {
@@ -616,7 +651,7 @@ body {
 }
 
 .bio-section p {
-    color: #666;
+    color: #eee9e9;
     line-height: 1.6;
 }
 
@@ -1153,6 +1188,10 @@ body {
     margin-bottom: 15px;
 }
 
+.tip-card i.fa-balance-scale {
+    color: black;
+}
+
 .tip-card h4 {
     font-size: 1.2rem;
     font-weight: 600;
@@ -1485,7 +1524,7 @@ body {
 .form-section h4 {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #333;
+    color: #ffffff;
     margin-bottom: 15px;
 }
 
