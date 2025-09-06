@@ -4,15 +4,18 @@ import random
 import requests
 import os
 import json
-# from firebase_config import firebase_service  # Temporarily disabled due to JWT signature issues
-from firebase_rest_service import firebase_rest_service as firebase_service
+from firebase_config import firebase_service
+from dotenv import load_dotenv
+load_dotenv()
+
+
 
 app = Flask(__name__)
 app.secret_key = 'roommate-finder-secret-key-change-in-production'
 
 # Hugging Face API configuration
 HF_API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
-HF_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN', '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')  # Set your token as environment variable
+HF_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN')  # Set your token as environment variable
 
 # Firebase is initialized in firebase_config.py
 # No need for SQLite database setup
@@ -217,6 +220,11 @@ def signup():
             flash('Please enter a valid email address', 'error')
             return render_template("signup.html")
         
+        # Check if Firebase is connected
+        if not firebase_service.is_connected():
+            flash('Database connection error. Please try again later.', 'error')
+            return render_template("signup.html")
+        
         # Check if user already exists
         existing_user_id, existing_user_data = firebase_service.get_user_by_username(username)
         
@@ -240,7 +248,7 @@ def signup():
             flash('Account created successfully! Please complete your profile.', 'success')
             return redirect(url_for('profile_setup'))
         else:
-            flash('Error creating account. Please try again.', 'error')
+            flash('Error creating account. Please check your Firebase configuration and try again.', 'error')
     
     return render_template("signup.html")
 

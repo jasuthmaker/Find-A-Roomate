@@ -1,1 +1,5 @@
 roommate_finder.db
+.env
+*.env
+firebase-service-account.json
+_pycache_

@@ -34,10 +34,18 @@ class FirebaseService:
                 print(f"Using database URL: {database_url}")
                 
                 if os.path.exists(service_account_path):
-                    cred = credentials.Certificate(service_account_path)
-                    self.app = firebase_admin.initialize_app(cred, {
-                        'databaseURL': database_url
-                    })
+                    try:
+                        cred = credentials.Certificate(service_account_path)
+                        self.app = firebase_admin.initialize_app(cred, {
+                            'databaseURL': database_url
+                        })
+                    except Exception as cred_error:
+                        print(f"❌ Service account credential error: {cred_error}")
+                        print("🔧 Please regenerate your Firebase service account key")
+                        print("1. Go to Firebase Console → Project Settings → Service Accounts")
+                        print("2. Click 'Generate new private key'")
+                        print("3. Replace the firebase-service-account.json file")
+                        return
                 else:
                     # For development, you can use a default configuration
                     print("Warning: Firebase service account file not found. Please set up Firebase credentials.")
@@ -49,6 +57,7 @@ class FirebaseService:
             
         except Exception as e:
             print(f"❌ Firebase initialization failed: {e}")
+            print("🔧 Please check your Firebase service account key and database URL")
             self.app = None
             self.db = None
     
