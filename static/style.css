@@ -249,12 +249,12 @@ body {
 .profile-header h2 {
     font-size: 2rem;
     font-weight: 700;
-    color: #333;
+    color: white;
     margin-bottom: 10px;
 }
 
 .profile-header p {
-    color: #666;
+    color: white;
     font-size: 1rem;
 }
 

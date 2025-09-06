@@ -169,18 +169,40 @@
                 // Show typing indicator
                 showTypingIndicator();
                 
-                // Simulate AI response with random delay
-                const delay = Math.random() * 2000 + 1000; // 1-3 seconds
-                setTimeout(() => {
+                // Call the backend API
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
                     // Remove typing indicator
                     const typingIndicator = document.querySelector('.typing');
                     if (typingIndicator) {
                         typingIndicator.remove();
                     }
                     
-                    const aiResponse = generateAIResponse(message);
-                    addAIMessage(aiResponse);
-                }, delay);
+                    if (data.success) {
+                        addAIMessage(data.response);
+                    } else {
+                        addAIMessage(data.response || 'Sorry, I encountered an error. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Remove typing indicator
+                    const typingIndicator = document.querySelector('.typing');
+                    if (typingIndicator) {
+                        typingIndicator.remove();
+                    }
+                    
+                    addAIMessage('Sorry, I encountered an error. Please try again.');
+                });
             }
         });
 
@@ -217,568 +239,48 @@
                 existingTyping.remove();
             }
             
-            // Set the message and trigger the form submission
-            messageInput.value = message;
-            
             // Add user message immediately
             addUserMessage(message);
-            messageInput.value = '';
             
             // Show typing indicator
             showTypingIndicator();
             
-            // Simulate AI response with random delay
-            const delay = Math.random() * 2000 + 1000; // 1-3 seconds
-            setTimeout(() => {
+            // Call the backend API
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
                 // Remove typing indicator
                 const typingIndicator = document.querySelector('.typing');
                 if (typingIndicator) {
                     typingIndicator.remove();
                 }
                 
-                const aiResponse = generateAIResponse(message);
-                addAIMessage(aiResponse);
-            }, delay);
+                if (data.success) {
+                    addAIMessage(data.response);
+                } else {
+                    addAIMessage(data.response || 'Sorry, I encountered an error. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Remove typing indicator
+                const typingIndicator = document.querySelector('.typing');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+                
+                addAIMessage('Sorry, I encountered an error. Please try again.');
+            });
         }
 
-        function generateAIResponse(userMessage) {
-            const message = userMessage.toLowerCase();
-            
-            // Enhanced AI responses with more variety and depth
-            if (message.includes('cleaning') || message.includes('schedule') || message.includes('chore')) {
-                const responses = [
-                    `Great question! Here's a comprehensive cleaning schedule I recommend:
-
-**Weekly Rotation System:**
-- Week 1: Kitchen & Common Areas (deep clean appliances, organize pantry)
-- Week 2: Bathroom & Trash (scrub tiles, clean mirrors, take out all trash)
-- Week 3: Living Room & Vacuuming (vacuum all carpets, dust surfaces)
-- Week 4: Deep Clean & Organization (declutter, organize shared spaces)
-
-**Daily Maintenance:**
-- Everyone cleans their own dishes immediately after use
-- Wipe down kitchen counters after cooking
-- Keep personal items in your room
-- Quick bathroom wipe-down after use
-
-**Monthly Tasks:**
-- Clean out fridge and pantry
-- Deep clean appliances
-- Organize shared storage areas
-
-Would you like me to customize this schedule for your specific living situation?`,
-
-                    `Here's an alternative cleaning approach that many roommates love:
-
-**Zone-Based Cleaning:**
-- Kitchen: Rotate weekly, includes dishes, counters, appliances
-- Bathroom: Rotate weekly, includes toilet, shower, sink
-- Living Room: Rotate weekly, includes vacuuming, dusting, organizing
-- Hallway/Common Areas: Rotate weekly, includes vacuuming, tidying
-
-**Pro Tips:**
-- Use a cleaning app like Tody or Clean My House
-- Set up a shared calendar for cleaning assignments
-- Create a cleaning supplies fund
-- Reward good cleaning with small treats or privileges
-
-This system ensures everyone contributes fairly and nothing gets forgotten!`
-                ];
-                return responses[Math.floor(Math.random() * responses.length)];
-            }
-            
-            if (message.includes('cooking') || message.includes('meal') || message.includes('food') || message.includes('grocery')) {
-                const responses = [
-                    `Here's a comprehensive cooking system that works great for roommates:
-
-**Option 1: Weekly Rotation System**
-- Each person cooks 2-3 meals per week
-- Rotate grocery shopping responsibilities
-- Share meal planning and recipe selection
-- Set a weekly grocery budget together
-
-**Option 2: Shared Meal System**
-- Cook together 2-3 times per week
-- Split grocery costs equally
-- Take turns choosing recipes and cuisines
-- Create a shared recipe collection
-
-**Option 3: Individual + Shared**
-- Each person handles their own breakfast/lunch
-- Share 2-3 dinners per week
-- Rotate weekend meal prep
-- Share snacks and beverages
-
-**Essential Tips:**
-- Discuss dietary restrictions and allergies upfront
-- Set clear grocery budget limits
-- Clean up immediately after cooking
-- Label personal food items
-- Create a shared shopping list
-
-Which approach sounds best for your living situation?`,
-
-                    `Let me help you create a meal planning system:
-
-**Weekly Meal Planning:**
-- Sunday: Plan the week's meals together
-- Monday: Grocery shopping for the week
-- Wednesday: Mid-week check-in and adjustments
-- Friday: Plan weekend meals
-
-**Grocery Management:**
-- Use apps like Splitwise or Venmo for shared expenses
-- Keep receipts for shared items
-- Create a shared pantry inventory
-- Set up automatic transfers for grocery funds
-
-**Cooking Schedule Template:**
-- Monday: Pasta night (easy and quick)
-- Tuesday: Taco Tuesday (fun and customizable)
-- Wednesday: Stir-fry (healthy and quick)
-- Thursday: Leftover night (reduce waste)
-- Friday: Pizza night (relaxing end to week)
-- Weekend: Try new recipes together
-
-Would you like me to help you set up a specific meal planning system?`
-                ];
-                return responses[Math.floor(Math.random() * responses.length)];
-            }
-            
-            if (message.includes('conflict') || message.includes('problem') || message.includes('issue') || message.includes('fight') || message.includes('argument')) {
-                const responses = [
-                    `I'm here to help mediate! Here's my proven approach to conflict resolution:
-
-**Step 1: Stay Calm and Collected**
-- Take a deep breath before responding
-- Use "I" statements instead of "you" statements
-- Focus on the specific issue, not personal attacks
-- Take a break if emotions are running high
-
-**Step 2: Communicate Clearly and Respectfully**
-- Use "I feel" statements (e.g., "I feel frustrated when...")
-- Be specific about the problem and its impact
-- Listen actively to their perspective
-- Ask clarifying questions to understand their viewpoint
-
-**Step 3: Find Win-Win Solutions**
-- Look for compromises that work for both parties
-- Be willing to meet halfway
-- Set clear boundaries and expectations
-- Consider alternative solutions together
-
-**Step 4: Follow Up and Maintain**
-- Check in after a few days to see how things are going
-- Adjust solutions if needed
-- Celebrate successful resolutions
-- Learn from the experience for future conflicts
-
-**Common Conflict Areas & Solutions:**
-- Noise: Set quiet hours, use headphones, soundproof rooms
-- Cleaning: Create clear schedules, use chore charts
-- Guests: Establish guest policies, give advance notice
-- Expenses: Use expense tracking apps, set spending limits
-
-What specific conflict would you like help resolving?`,
-
-                    `Conflict resolution is one of my specialties! Here's a different approach:
-
-**The "Roommate Mediation" Method:**
-1. **Schedule a neutral time** to discuss the issue
-2. **Use a talking stick** - only the person holding it speaks
-3. **Each person gets 5 minutes** to explain their perspective
-4. **Find 3 possible solutions** together
-5. **Choose the best solution** that works for both
-6. **Set a follow-up date** to check progress
-
-**Prevention Strategies:**
-- Hold weekly house meetings
-- Create a shared house rules document
-- Use a group chat for communication
-- Address small issues before they become big problems
-- Celebrate good roommate behavior
-
-**When to Escalate:**
-- If conflicts become personal attacks
-- If someone repeatedly breaks agreements
-- If safety becomes a concern
-- If mediation attempts fail multiple times
-
-Remember: Most conflicts stem from miscommunication or unmet expectations. Clear communication is key!`
-                ];
-                return responses[Math.floor(Math.random() * responses.length)];
-            }
-            
-            if (message.includes('rule') || message.includes('guideline') || message.includes('policy') || message.includes('agreement')) {
-                const responses = [
-                    `Here are comprehensive house rules that promote harmony:
-
-**Common Areas Rules:**
-- Clean up after yourself immediately
-- No personal items in shared spaces
-- Respect quiet hours (10 PM - 7 AM on weekdays, 11 PM - 8 AM on weekends)
-- Keep shared spaces tidy and welcoming
-
-**Kitchen Rules:**
-- Wash dishes within 2 hours of use
-- Label your food in the fridge with name and date
-- Take turns buying shared items (milk, bread, etc.)
-- Clean up spills immediately
-- No cooking after 10 PM on weekdays
-
-**Bathroom Rules:**
-- Keep personal items in your room
-- Clean up after showering (wipe down surfaces)
-- Replace toilet paper when empty
-- Respect shower time limits during busy hours
-- Keep bathroom well-ventilated
-
-**Guest Policies:**
-- Give 24-hour notice for overnight guests
-- Limit guests to 2 nights per week maximum
-- Ensure guests follow house rules
-- No guests during exam periods without permission
-- Guests must be introduced to all roommates
-
-**Communication Rules:**
-- Use group chat for house updates and announcements
-- Address issues promptly and respectfully
-- Hold monthly house meetings
-- Respect each other's privacy and personal space
-- No passive-aggressive behavior - speak directly
-
-**Financial Rules:**
-- Split shared expenses equally
-- Pay bills on time
-- Discuss large purchases before buying
-- Keep receipts for shared items
-- Use expense tracking apps
-
-Would you like me to help you customize these rules for your specific living situation?`,
-
-                    `Here's an alternative approach to house rules - the "Living Agreement":
-
-**The Living Agreement Method:**
-Instead of rigid rules, create a living agreement that everyone contributes to and agrees on.
-
-**Core Principles:**
-1. **Respect** - for each other, shared spaces, and personal boundaries
-2. **Communication** - open, honest, and timely
-3. **Responsibility** - for your actions and shared spaces
-4. **Flexibility** - willingness to adapt and compromise
-5. **Fun** - making shared living enjoyable
-
-**Sample Living Agreement:**
-- "We agree to keep shared spaces clean and tidy"
-- "We will communicate about guests and visitors"
-- "We respect each other's study and sleep schedules"
-- "We will work together to resolve conflicts peacefully"
-- "We will contribute fairly to shared expenses"
-
-**Benefits of This Approach:**
-- More collaborative and less authoritarian
-- Easier to modify as situations change
-- Promotes better communication
-- Creates a sense of shared ownership
-- Reduces resentment and rule-breaking
-
-**Implementation Tips:**
-- Review and update monthly
-- Everyone must agree before adding new items
-- Focus on behaviors, not personalities
-- Celebrate when the agreement works well
-
-Would you like help creating a living agreement for your household?`
-                ];
-                return responses[Math.floor(Math.random() * responses.length)];
-            }
-            
-            if (message.includes('expense') || message.includes('money') || message.includes('split') || message.includes('bill') || message.includes('cost')) {
-                const responses = [
-                    `Here's a comprehensive guide to fair expense splitting:
-
-**Rent & Utilities:**
-- Split rent by room size or equally (discuss what's fair)
-- Share utility bills equally (electric, water, gas, internet)
-- Use apps like Splitwise, Venmo, or Zelle for easy tracking
-- Set up automatic transfers for recurring bills
-
-**Groceries & Food:**
-- Create a shared grocery fund with equal contributions
-- Take turns shopping for shared items
-- Keep receipts for shared purchases
-- Use apps like OurGroceries for shared shopping lists
-- Consider meal planning to reduce food waste
-
-**Common Household Items:**
-- Split cleaning supplies equally
-- Share internet and streaming services
-- Discuss large purchases (furniture, appliances) together
-- Create a shared household fund for unexpected expenses
-
-**Pro Tips for Fair Splitting:**
-- Set up automatic transfers for recurring expenses
-- Review and settle up monthly
-- Be transparent about all costs
-- Use expense tracking apps for accuracy
-- Discuss budget limits before making purchases
-
-**Sample Monthly Budget Template:**
-- Rent: $X per person
-- Utilities: $X per person
-- Groceries: $X per person
-- Household supplies: $X per person
-- Internet/Streaming: $X per person
-
-Would you like me to help you set up a specific expense tracking system?`,
-
-                    `Let me share some advanced expense management strategies:
-
-**The "Expense Categories" Method:**
-Divide expenses into categories and handle each differently:
-
-**Fixed Expenses (Split Equally):**
-- Rent, utilities, internet, insurance
-- These are the same every month
-
-**Variable Expenses (Track and Split):**
-- Groceries, household supplies, cleaning products
-- Track these and split based on actual usage
-
-**Personal Expenses (Individual):**
-- Personal food, personal items, personal subscriptions
-- Each person pays for their own
-
-**Shared Fun Expenses (Optional):**
-- Entertainment, shared meals out, house parties
-- Discuss and agree on these together
-
-**Advanced Tracking Methods:**
-- Use Splitwise for detailed expense tracking
-- Create shared Google Sheets for transparency
-- Set up joint bank accounts for shared expenses
-- Use apps like Mint or YNAB for budgeting
-
-**Monthly Review Process:**
-- Review all expenses together
-- Adjust categories if needed
-- Plan for upcoming large expenses
-- Celebrate staying within budget
-
-**Conflict Prevention:**
-- Set spending limits for shared items
-- Require approval for purchases over $X
-- Keep all receipts and documentation
-- Be flexible and understanding
-
-This system ensures fairness while maintaining flexibility!`
-                ];
-                return responses[Math.floor(Math.random() * responses.length)];
-            }
-            
-            if (message.includes('guest') || message.includes('visitor') || message.includes('overnight')) {
-                return `Great question about guest policies! Here's a comprehensive approach:
-
-**Guest Policy Guidelines:**
-- Give 24-48 hour notice for overnight guests
-- Limit guests to 2-3 nights per week maximum
-- Introduce guests to all roommates
-- Ensure guests follow house rules
-- No guests during exam periods without permission
-
-**Communication Protocol:**
-- Use group chat to announce guests
-- Get approval from all roommates for extended stays
-- Discuss any concerns openly and respectfully
-- Set clear expectations for guest behavior
-
-**Guest Responsibilities:**
-- Guests must be respectful of shared spaces
-- Clean up after themselves
-- Follow quiet hours and house rules
-- Not interfere with other roommates' routines
-
-**Special Considerations:**
-- Discuss significant others staying over regularly
-- Set limits on how often the same person can visit
-- Consider impact on shared resources (bathroom, kitchen)
-- Be flexible but maintain boundaries
-
-Would you like help creating a specific guest policy for your household?`;
-            }
-            
-            if (message.includes('noise') || message.includes('loud') || message.includes('quiet') || message.includes('sound')) {
-                return `Noise management is crucial for roommate harmony! Here's my approach:
-
-**Quiet Hours Guidelines:**
-- Weekdays: 10 PM - 7 AM
-- Weekends: 11 PM - 8 AM
-- Study periods: Respect each other's exam schedules
-- Be extra quiet during early morning/late night hours
-
-**Noise Reduction Strategies:**
-- Use headphones for music, videos, and calls
-- Keep TV/music volume at reasonable levels
-- Close doors gently
-- Use rugs and curtains to absorb sound
-- Consider soundproofing options for bedrooms
-
-**Communication Tips:**
-- Address noise issues promptly but politely
-- Use "I" statements: "I have an early morning, could we keep it down?"
-- Be understanding of occasional loud moments
-- Compromise on special occasions
-
-**Proactive Solutions:**
-- Create a shared calendar for quiet study times
-- Use white noise machines or fans
-- Invest in good headphones for everyone
-- Designate "quiet zones" in the house
-
-Remember: Good communication and mutual respect go a long way in preventing noise conflicts!`;
-            }
-            
-            if (message.includes('study') || message.includes('work') || message.includes('exam') || message.includes('homework')) {
-                return `Creating a study-friendly environment is essential! Here's how to manage it:
-
-**Study Space Management:**
-- Designate quiet study areas in the house
-- Create a shared study schedule
-- Respect each other's exam periods
-- Keep study areas clean and organized
-
-**Study Time Guidelines:**
-- Use headphones during study hours
-- Keep conversations brief and quiet
-- Avoid loud activities during study time
-- Be understanding of different study styles
-
-**Exam Period Considerations:**
-- Extra quiet hours during finals
-- No parties or loud gatherings
-- Support each other's academic success
-- Share study resources and tips
-
-**Creating the Right Environment:**
-- Good lighting in study areas
-- Comfortable seating and desk space
-- Minimal distractions
-- Access to power outlets and WiFi
-
-**Communication During Study Time:**
-- Use group chat to coordinate study schedules
-- Give advance notice of important study sessions
-- Be flexible and understanding
-- Celebrate academic achievements together
-
-Would you like help creating a study-friendly environment in your shared space?`;
-            }
-            
-            if (message.includes('pet') || message.includes('animal') || message.includes('dog') || message.includes('cat')) {
-                return `Pet policies are important to discuss! Here's a comprehensive approach:
-
-**Pet Policy Considerations:**
-- Check lease agreements for pet restrictions
-- Discuss allergies and phobias with all roommates
-- Consider pet care responsibilities
-- Plan for pet-related expenses
-
-**Pet Care Responsibilities:**
-- Who will feed, walk, and care for the pet?
-- How will pet expenses be split?
-- What happens during vacations or emergencies?
-- Who is responsible for pet damage?
-
-**House Rules for Pets:**
-- Keep pets out of certain areas if needed
-- Clean up after pets immediately
-- Manage pet noise and behavior
-- Respect other roommates' comfort levels
-
-**Financial Considerations:**
-- Pet deposits and fees
-- Food, toys, and supplies
-- Veterinary care and emergencies
-- Pet-sitting or boarding costs
-
-**Communication is Key:**
-- Discuss all pet-related decisions together
-- Be honest about comfort levels
-- Create clear expectations
-- Be flexible and understanding
-
-Remember: Pets are a big responsibility and affect everyone in the household!`;
-            }
-            
-            if (message.includes('party') || message.includes('gathering') || message.includes('event') || message.includes('celebration')) {
-                return `Hosting events as roommates requires coordination! Here's how to do it right:
-
-**Event Planning Guidelines:**
-- Give at least 48 hours notice for parties
-- Get approval from all roommates
-- Discuss guest limits and expectations
-- Plan for cleanup and noise management
-
-**Pre-Event Preparation:**
-- Clean and organize shared spaces
-- Stock up on supplies and refreshments
-- Set up music and lighting
-- Prepare for increased foot traffic
-
-**During the Event:**
-- Monitor noise levels and guest behavior
-- Keep shared spaces clean
-- Be available to address any issues
-- Respect neighbors and building rules
-
-**Post-Event Cleanup:**
-- Clean up immediately after the event
-- Dispose of trash and recycling
-- Return furniture to original positions
-- Check for any damage or issues
-
-**Communication Tips:**
-- Use group chat for event planning
-- Be considerate of everyone's schedules
-- Discuss any concerns openly
-- Celebrate together when possible
-
-**Pro Tips:**
-- Create a shared event calendar
-- Establish a party fund for shared expenses
-- Set clear boundaries and expectations
-- Be flexible and understanding
-
-Would you like help planning a specific event or creating an event policy?`;
-            }
-            
-            // Default response with more helpful suggestions
-            return `I understand you're asking about "${userMessage}". I'm here to help with all aspects of shared living! 
-
-**I can assist you with:**
-- Creating fair cleaning schedules and chore rotations
-- Resolving conflicts peacefully and effectively
-- Setting up house rules and living agreements
-- Managing shared expenses and financial planning
-- Coordinating chores and household responsibilities
-- Guest policies and visitor management
-- Noise management and quiet hours
-- Study-friendly environments
-- Pet policies and care
-- Event planning and hosting
-- Communication strategies
-- And much more!
-
-**Popular topics I can help with:**
-- "How do I create a cleaning schedule?"
-- "Help me resolve a conflict with my roommate"
-- "What are good house rules to establish?"
-- "How do I split expenses fairly?"
-- "Help me manage noise issues"
-- "How do I handle guests and visitors?"
-
-Could you be more specific about what you'd like help with? I'm here to make your shared living experience smoother, more enjoyable, and conflict-free!`;
-        }
 
         function scrollToBottom() {
             chatMessages.scrollTop = chatMessages.scrollHeight;

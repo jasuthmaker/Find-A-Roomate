@@ -2,9 +2,16 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import random
+import requests
+import os
+import json
 
 app = Flask(__name__)
 app.secret_key = 'roommate-finder-secret-key-change-in-production'
+
+# Hugging Face API configuration
+HF_API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
+HF_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN', 'hf_your_token_here')  # Set your token as environment variable
 
 # Database setup
 def init_db():
@@ -88,6 +95,137 @@ def require_login(f):
         return f(*args, **kwargs)
     decorated_function.__name__ = f.__name__
     return decorated_function
+
+def get_huggingface_response(user_message):
+    """Get response from Hugging Face API with housing context"""
+    try:
+        # Add housing context to the user message
+        housing_context = """You are RoomieBot, an AI assistant specialized in helping people with shared living situations, roommate issues, and housing-related questions. You provide practical, helpful advice about:
+- Cleaning schedules and chore management
+- Conflict resolution between roommates
+- House rules and living agreements
+- Expense splitting and financial management
+- Guest policies and visitor management
+- Noise management and quiet hours
+- Study-friendly environments
+- Pet policies
+- Event planning and hosting
+- Communication strategies
+
+Keep responses helpful, practical, and focused on shared living. Be friendly and understanding. Here's the user's question: """
+        
+        full_prompt = housing_context + user_message
+        
+        headers = {
+            "Authorization": f"Bearer {HF_API_TOKEN}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "inputs": full_prompt,
+            "parameters": {
+                "max_length": 500,
+                "temperature": 0.7,
+                "do_sample": True,
+                "return_full_text": False
+            }
+        }
+        
+        response = requests.post(HF_API_URL, headers=headers, json=payload, timeout=30)
+        
+        if response.status_code == 200:
+            result = response.json()
+            if isinstance(result, list) and len(result) > 0:
+                return result[0].get('generated_text', 'I apologize, but I had trouble processing your request. Could you please rephrase your question?')
+            else:
+                return 'I apologize, but I had trouble processing your request. Could you please rephrase your question?'
+        else:
+            print(f"Hugging Face API error: {response.status_code} - {response.text}")
+            return get_fallback_response(user_message)
+            
+    except requests.exceptions.Timeout:
+        print("Hugging Face API timeout")
+        return get_fallback_response(user_message)
+    except requests.exceptions.RequestException as e:
+        print(f"Hugging Face API request error: {e}")
+        return get_fallback_response(user_message)
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return get_fallback_response(user_message)
+
+def get_fallback_response(user_message):
+    """Fallback responses when Hugging Face API is unavailable"""
+    message = user_message.lower()
+    
+    if any(word in message for word in ['cleaning', 'schedule', 'chore']):
+        return """I'd be happy to help you create a cleaning schedule! Here's a simple approach:
+
+**Weekly Rotation System:**
+- Week 1: Kitchen & Common Areas
+- Week 2: Bathroom & Trash
+- Week 3: Living Room & Vacuuming
+- Week 4: Deep Clean & Organization
+
+**Daily Maintenance:**
+- Everyone cleans their own dishes immediately
+- Wipe down kitchen counters after cooking
+- Keep personal items in your room
+
+Would you like me to customize this schedule for your specific situation?"""
+    
+    elif any(word in message for word in ['conflict', 'problem', 'issue', 'fight']):
+        return """I understand you're dealing with a conflict. Here's my approach to resolution:
+
+**Step 1: Stay Calm**
+- Take a deep breath before responding
+- Use "I" statements instead of "you" statements
+- Focus on the specific issue, not personal attacks
+
+**Step 2: Communicate Clearly**
+- Use "I feel" statements (e.g., "I feel frustrated when...")
+- Listen actively to their perspective
+- Ask clarifying questions
+
+**Step 3: Find Solutions Together**
+- Look for compromises that work for both parties
+- Set clear boundaries and expectations
+- Consider alternative solutions
+
+What specific conflict would you like help resolving?"""
+    
+    elif any(word in message for word in ['expense', 'money', 'split', 'bill']):
+        return """Great question about expense splitting! Here's a fair approach:
+
+**Rent & Utilities:**
+- Split rent by room size or equally
+- Share utility bills equally
+- Use apps like Splitwise or Venmo for tracking
+
+**Groceries & Food:**
+- Create a shared grocery fund
+- Take turns shopping for shared items
+- Keep receipts for shared purchases
+
+**Pro Tips:**
+- Set up automatic transfers for recurring expenses
+- Review and settle up monthly
+- Be transparent about all costs
+
+Would you like help setting up a specific expense tracking system?"""
+    
+    else:
+        return """I'm here to help with all aspects of shared living! I can assist you with:
+
+- Creating fair cleaning schedules
+- Resolving conflicts peacefully
+- Setting up house rules
+- Managing shared expenses
+- Guest policies
+- Noise management
+- Study environments
+- And much more!
+
+Could you be more specific about what you'd like help with? I'm here to make your shared living experience smoother and more enjoyable!"""
 
 # Add sample data
 def add_sample_data():
@@ -430,6 +568,33 @@ def chat_assistant():
 @require_login
 def success_predictor():
     return render_template("success_predictor.html")
+
+@app.route("/chat", methods=["POST"])
+@require_login
+def chat():
+    """Handle chat messages with Hugging Face API"""
+    try:
+        data = request.get_json()
+        user_message = data.get('message', '').strip()
+        
+        if not user_message:
+            return jsonify({'error': 'Message cannot be empty'}), 400
+        
+        # Get AI response from Hugging Face API
+        ai_response = get_huggingface_response(user_message)
+        
+        return jsonify({
+            'success': True,
+            'response': ai_response
+        })
+        
+    except Exception as e:
+        print(f"Chat endpoint error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Sorry, I encountered an error. Please try again.',
+            'response': get_fallback_response(user_message if 'user_message' in locals() else '')
+        }), 500
 
 @app.route("/reset_profiles", methods=["POST"])
 @require_login
