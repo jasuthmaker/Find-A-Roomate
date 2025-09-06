@@ -55,7 +55,13 @@
                         
                         <div class="form-group">
                             <label for="location">Preferred Location</label>
-                            <input type="text" id="location" name="location" placeholder="e.g., Downtown, Midtown" required>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="location" name="location" placeholder="e.g., Downtown, Midtown" required style="flex: 1;">
+                                <button type="button" id="getLocationBtn" class="btn btn-secondary" style="padding: 12px 16px; white-space: nowrap; flex-shrink: 0;">
+                                    <i class="fas fa-map-marker-alt"></i> Use Current Location
+                                </button>
+                            </div>
+                            <small id="locationStatus" style="color: #666; font-size: 0.8rem; margin-top: 5px; display: block;"></small>
                         </div>
                     </div>
 
@@ -275,6 +281,91 @@
                 return;
             }
         });
+
+        // Geolocation functionality
+        const getLocationBtn = document.getElementById('getLocationBtn');
+        const locationInput = document.getElementById('location');
+        const locationStatus = document.getElementById('locationStatus');
+
+        getLocationBtn.addEventListener('click', function() {
+            if (!navigator.geolocation) {
+                locationStatus.textContent = 'Geolocation is not supported by this browser.';
+                locationStatus.style.color = '#dc3545';
+                return;
+            }
+
+            locationStatus.textContent = 'Getting your location...';
+            locationStatus.style.color = '#666';
+            getLocationBtn.disabled = true;
+            getLocationBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Getting Location...';
+
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    
+                    // Use reverse geocoding to get location name
+                    getLocationName(latitude, longitude);
+                },
+                function(error) {
+                    let errorMessage = 'Unable to get your location. ';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage += 'Please allow location access and try again.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage += 'Location information is unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage += 'Location request timed out.';
+                            break;
+                        default:
+                            errorMessage += 'An unknown error occurred.';
+                            break;
+                    }
+                    
+                    locationStatus.textContent = errorMessage;
+                    locationStatus.style.color = '#dc3545';
+                    getLocationBtn.disabled = false;
+                    getLocationBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Use Current Location';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 300000
+                }
+            );
+        });
+
+        function getLocationName(lat, lng) {
+            // Using a free geocoding service (you can replace with Google Maps API if needed)
+            fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.city && data.principalSubdivision) {
+                        const locationName = `${data.city}, ${data.principalSubdivision}`;
+                        locationInput.value = locationName;
+                        locationStatus.textContent = `Location set to: ${locationName}`;
+                        locationStatus.style.color = '#28a745';
+                    } else {
+                        locationInput.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                        locationStatus.textContent = `Location set to coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                        locationStatus.style.color = '#28a745';
+                    }
+                    
+                    getLocationBtn.disabled = false;
+                    getLocationBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Use Current Location';
+                })
+                .catch(error => {
+                    // Fallback to coordinates if reverse geocoding fails
+                    locationInput.value = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                    locationStatus.textContent = `Location set to coordinates: ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                    locationStatus.style.color = '#28a745';
+                    
+                    getLocationBtn.disabled = false;
+                    getLocationBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i> Use Current Location';
+                });
+        }
     </script>
 </body>
 </html>

@@ -98,7 +98,7 @@
                 </div>
 
                 <!-- Swipe Actions -->
-                <div class="swipe-actions frosty-card">
+                <div class="swipe-actions">
                     <button class="action-btn pass-btn" onclick="swipeAction('pass')">
                         <i class="fas fa-times"></i>
                     </button>
@@ -208,7 +208,7 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    swiped_id: {{ match.user_id }},
+                    swiped_id: parseInt('{{ match.user_id }}'),
                     action: action
                 })
             })

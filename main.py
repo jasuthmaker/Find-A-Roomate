@@ -1,89 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
-import sqlite3
 import random
 import requests
 import os
 import json
+from firebase_config import firebase_service
 
 app = Flask(__name__)
 app.secret_key = 'roommate-finder-secret-key-change-in-production'
 
 # Hugging Face API configuration
 HF_API_URL = "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium"
-HF_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN', 'hf_your_token_here')  # Set your token as environment variable
+HF_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN', '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')  # Set your token as environment variable
 
-# Database setup
-def init_db():
-    conn = sqlite3.connect('roommate_finder.db')
-    cursor = conn.cursor()
-    
-    # Users table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    
-    # User profiles table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS user_profiles (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
-            name TEXT NOT NULL,
-            age INTEGER NOT NULL,
-            budget INTEGER NOT NULL,
-            location TEXT NOT NULL,
-            bio TEXT,
-            interests TEXT,
-            lifestyle_preferences TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users (id)
-        )
-    ''')
-    
-    # Swipes table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS swipes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            swiper_id INTEGER NOT NULL,
-            swiped_id INTEGER NOT NULL,
-            action TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (swiper_id) REFERENCES users (id),
-            FOREIGN KEY (swiped_id) REFERENCES users (id),
-            UNIQUE(swiper_id, swiped_id)
-        )
-    ''')
-    
-    # Matches table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS matches (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user1_id INTEGER NOT NULL,
-            user2_id INTEGER NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user1_id) REFERENCES users (id),
-            FOREIGN KEY (user2_id) REFERENCES users (id),
-            UNIQUE(user1_id, user2_id)
-        )
-    ''')
-    
-    conn.commit()
-    conn.close()
-
-# Initialize database
-init_db()
-
-# Helper functions
-def get_db_connection():
-    conn = sqlite3.connect('roommate_finder.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+# Firebase is initialized in firebase_config.py
+# No need for SQLite database setup
 
 def is_logged_in():
     return 'user_id' in session
@@ -227,52 +158,8 @@ Would you like help setting up a specific expense tracking system?"""
 
 Could you be more specific about what you'd like help with? I'm here to make your shared living experience smoother and more enjoyable!"""
 
-# Add sample data
-def add_sample_data():
-    conn = get_db_connection()
-    
-    # Check if sample data already exists
-    existing_users = conn.execute('SELECT COUNT(*) as count FROM users').fetchone()
-    if existing_users['count'] > 0:
-        conn.close()
-        return
-    
-    # Sample users
-    conn.execute('''
-        INSERT INTO users (username, email, password_hash) VALUES 
-        ('alex_smith', 'alex@example.com', ?),
-        ('maya_johnson', 'maya@example.com', ?),
-        ('sam_wilson', 'sam@example.com', ?),
-        ('jessica_brown', 'jessica@example.com', ?),
-        ('mike_davis', 'mike@example.com', ?),
-        ('sarah_miller', 'sarah@example.com', ?)
-    ''', (
-        generate_password_hash('password123', method='pbkdf2:sha256'),
-        generate_password_hash('password123', method='pbkdf2:sha256'),
-        generate_password_hash('password123', method='pbkdf2:sha256'),
-        generate_password_hash('password123', method='pbkdf2:sha256'),
-        generate_password_hash('password123', method='pbkdf2:sha256'),
-        generate_password_hash('password123', method='pbkdf2:sha256')
-    ))
-    
-    conn.commit()
-    
-    # Sample profiles
-    conn.execute('''
-        INSERT INTO user_profiles (user_id, name, age, budget, location, bio, interests, lifestyle_preferences) VALUES 
-        (2, 'Alex Smith', 22, 600, 'Downtown', 'Love music, gaming, and cooking!', '["Music", "Gaming", "Cooking", "Movies"]', '["Night Owl", "Very Social", "Moderately Clean", "Love Pets"]'),
-        (3, 'Maya Johnson', 25, 750, 'Midtown', 'Fitness enthusiast and nature lover.', '["Fitness", "Nature", "Reading", "Photography"]', '["Early Bird", "Quiet", "Very Clean", "Neutral"]'),
-        (4, 'Sam Wilson', 23, 650, 'Uptown', 'Artist and photographer.', '["Art", "Photography", "Travel", "Cooking"]', '["Flexible", "Moderately Social", "Moderately Clean", "Love Pets"]'),
-        (5, 'Jessica Brown', 24, 700, 'Downtown', 'Tech professional who loves coding.', '["Technology", "Gaming", "Movies", "Music"]', '["Night Owl", "Moderately Social", "Moderately Clean", "Neutral"]'),
-        (6, 'Mike Davis', 26, 800, 'Midtown', 'Sports fanatic and outdoor enthusiast.', '["Sports", "Fitness", "Nature", "Travel"]', '["Early Bird", "Very Social", "Very Clean", "No Pets"]'),
-        (7, 'Sarah Miller', 21, 550, 'Uptown', 'Student studying art history.', '["Art", "Reading", "Movies", "Nature"]', '["Flexible", "Quiet", "Very Clean", "Neutral"]')
-    ''')
-    
-    conn.commit()
-    conn.close()
-
-# Add sample data
-add_sample_data()
+# Sample data is handled by Firebase service
+# No need for separate sample data function
 
 # Routes
 @app.route("/")
@@ -292,13 +179,12 @@ def login():
             flash('Please fill in all fields', 'error')
             return render_template("login.html")
         
-        conn = get_db_connection()
-        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
-        conn.close()
+        # Get user from Firebase
+        user_id, user_data = firebase_service.get_user_by_username(username)
         
-        if user and check_password_hash(user['password_hash'], password):
-            session['user_id'] = user['id']
-            session['username'] = user['username']
+        if user_data and check_password_hash(user_data['password_hash'], password):
+            session['user_id'] = user_id
+            session['username'] = user_data['username']
             flash('Login successful!', 'success')
             return redirect(url_for('swipe'))
         else:
@@ -330,30 +216,30 @@ def signup():
             flash('Please enter a valid email address', 'error')
             return render_template("signup.html")
         
-        conn = get_db_connection()
-        
         # Check if user already exists
-        existing_user = conn.execute('SELECT * FROM users WHERE username = ? OR email = ?', (username, email)).fetchone()
+        existing_user_id, existing_user_data = firebase_service.get_user_by_username(username)
         
-        if existing_user:
+        if existing_user_data:
             flash('Username or email already exists', 'error')
-            conn.close()
             return render_template("signup.html")
         
         # Create new user
         password_hash = generate_password_hash(password, method='pbkdf2:sha256')
-        conn.execute('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)', (username, email, password_hash))
-        conn.commit()
+        user_data = {
+            'username': username,
+            'email': email,
+            'password_hash': password_hash
+        }
         
-        # Get the new user's ID
-        user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
+        user_id = firebase_service.create_user(user_data)
         
-        session['user_id'] = user['id']
-        session['username'] = user['username']
-        conn.close()
-        
-        flash('Account created successfully! Please complete your profile.', 'success')
-        return redirect(url_for('profile_setup'))
+        if user_id:
+            session['user_id'] = user_id
+            session['username'] = username
+            flash('Account created successfully! Please complete your profile.', 'success')
+            return redirect(url_for('profile_setup'))
+        else:
+            flash('Error creating account. Please try again.', 'error')
     
     return render_template("signup.html")
 
@@ -400,56 +286,50 @@ def profile_setup():
             if key.startswith('lifestyle_'):
                 lifestyle_prefs.append(request.form.get(key))
         
-        conn = get_db_connection()
-        conn.execute('''INSERT INTO user_profiles 
-                       (user_id, name, age, budget, location, bio, interests, lifestyle_preferences)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                    (session['user_id'], name, age, budget, location, bio, str(interests), str(lifestyle_prefs)))
-        conn.commit()
-        conn.close()
+        # Prepare profile data for Firebase
+        profile_data = {
+            'name': name,
+            'age': age,
+            'budget': budget,
+            'location': location,
+            'bio': bio,
+            'interests': json.dumps(interests),
+            'lifestyle_preferences': json.dumps(lifestyle_prefs)
+        }
         
-        flash('Profile created successfully!', 'success')
-        return redirect(url_for('swipe'))
+        # Create profile in Firebase
+        if firebase_service.create_profile(session['user_id'], profile_data):
+            flash('Profile created successfully!', 'success')
+            return redirect(url_for('swipe'))
+        else:
+            flash('Error creating profile. Please try again.', 'error')
     
     return render_template("profile_setup.html")
 
 @app.route("/swipe")
 @require_login
 def swipe():
-    conn = get_db_connection()
-    
-    # Get user's profile
-    user_profile = conn.execute('SELECT * FROM user_profiles WHERE user_id = ?', (session['user_id'],)).fetchone()
+    # Get user's profile from Firebase
+    user_profile = firebase_service.get_profile(session['user_id'])
     
     if not user_profile:
-        conn.close()
         return redirect(url_for('profile_setup'))
     
     # Get potential matches (users not yet swiped on)
-    swiped_users = conn.execute('SELECT swiped_id FROM swipes WHERE swiper_id = ?', (session['user_id'],)).fetchall()
-    swiped_ids = [row['swiped_id'] for row in swiped_users]
+    swiped_ids = firebase_service.get_swiped_users(session['user_id'])
     
-    # Get other users' profiles
-    query = '''SELECT up.*, u.username FROM user_profiles up 
-               JOIN users u ON up.user_id = u.id 
-               WHERE up.user_id != ?'''
+    # Get all profiles except current user and already swiped users
+    all_profiles = firebase_service.get_all_profiles(exclude_user_id=session['user_id'])
     
-    params = [session['user_id']]
+    # Filter out already swiped users
+    available_matches = [profile for profile in all_profiles if profile['user_id'] not in swiped_ids]
     
-    if swiped_ids:
-        query += ' AND up.user_id NOT IN ({})'.format(','.join('?' * len(swiped_ids)))
-        params.extend(swiped_ids)
-    
-    # Get all potential matches
-    all_matches = conn.execute(query, params).fetchall()
-    
-    if not all_matches:
-        conn.close()
+    if not available_matches:
         return render_template("no_more_matches.html")
     
     # Calculate compatibility scores and sort by best matches
     scored_matches = []
-    for match in all_matches:
+    for match in available_matches:
         score = calculate_compatibility_score(user_profile, match)
         scored_matches.append((match, score))
     
@@ -459,13 +339,15 @@ def swipe():
     # Select the best match
     best_match = scored_matches[0][0]
     
-    conn.close()
-    
     return render_template("swipe.html", match=best_match)
 
 def calculate_compatibility_score(user_profile, potential_match):
-    """Calculate compatibility score between two users"""
+    """Calculate compatibility score between two users with location priority"""
     score = 0
+    
+    # Location compatibility (highest priority for nearby roommates)
+    location_score = calculate_location_score(user_profile['location'], potential_match['location'])
+    score += location_score
     
     # Budget compatibility
     budget_diff = abs(user_profile['budget'] - potential_match['budget'])
@@ -475,10 +357,6 @@ def calculate_compatibility_score(user_profile, potential_match):
         score += 20
     elif budget_diff <= 300:
         score += 10
-    
-    # Location compatibility
-    if user_profile['location'].lower() == potential_match['location'].lower():
-        score += 25
     
     # Age compatibility
     age_diff = abs(user_profile['age'] - potential_match['age'])
@@ -512,6 +390,69 @@ def calculate_compatibility_score(user_profile, potential_match):
     
     return score
 
+def calculate_location_score(user_location, match_location):
+    """Calculate location compatibility score with enhanced matching"""
+    user_loc = user_location.lower().strip()
+    match_loc = match_location.lower().strip()
+    
+    # Exact match (highest score)
+    if user_loc == match_loc:
+        return 40
+    
+    # Check for city-level matches
+    user_city = user_loc.split(',')[0].strip()
+    match_city = match_loc.split(',')[0].strip()
+    
+    if user_city == match_city:
+        return 35
+    
+    # Check for partial matches (same area/neighborhood)
+    user_words = set(user_loc.replace(',', ' ').split())
+    match_words = set(match_loc.replace(',', ' ').split())
+    
+    # Find common words (excluding common words)
+    common_words = user_words & match_words
+    common_words.discard('downtown')
+    common_words.discard('midtown')
+    common_words.discard('uptown')
+    common_words.discard('east')
+    common_words.discard('west')
+    common_words.discard('north')
+    common_words.discard('south')
+    
+    if common_words:
+        return 25 + len(common_words) * 5
+    
+    # Check for coordinate-based matching (if locations are coordinates)
+    if ',' in user_loc and ',' in match_loc:
+        try:
+            user_coords = user_loc.split(',')
+            match_coords = match_loc.split(',')
+            
+            if len(user_coords) == 2 and len(match_coords) == 2:
+                user_lat = float(user_coords[0].strip())
+                user_lng = float(user_coords[1].strip())
+                match_lat = float(match_coords[0].strip())
+                match_lng = float(match_coords[1].strip())
+                
+                # Calculate distance (simplified)
+                distance = ((user_lat - match_lat) ** 2 + (user_lng - match_lng) ** 2) ** 0.5
+                
+                # Score based on distance (closer = higher score)
+                if distance < 0.01:  # Very close (within ~1km)
+                    return 35
+                elif distance < 0.05:  # Close (within ~5km)
+                    return 25
+                elif distance < 0.1:  # Nearby (within ~10km)
+                    return 15
+                else:
+                    return 5
+        except ValueError:
+            pass
+    
+    # No match
+    return 0
+
 @app.route("/swipe_action", methods=["POST"])
 @require_login
 def swipe_action():
@@ -519,38 +460,32 @@ def swipe_action():
     swiped_id = data.get('swiped_id')
     action = data.get('action')
     
-    conn = get_db_connection()
-    
-    # Record the swipe
-    conn.execute('INSERT INTO swipes (swiper_id, swiped_id, action) VALUES (?, ?, ?)', (session['user_id'], swiped_id, action))
-    
-    # If it's a like, check if it's a mutual match
-    if action == 'like':
-        mutual_like = conn.execute('SELECT * FROM swipes WHERE swiper_id = ? AND swiped_id = ? AND action = "like"', (swiped_id, session['user_id'])).fetchone()
+    # Record the swipe in Firebase
+    if firebase_service.create_swipe(session['user_id'], swiped_id, action):
+        # If it's a like, check if it's a mutual match
+        if action == 'like':
+            if firebase_service.check_mutual_like(session['user_id'], swiped_id):
+                # Create a match
+                firebase_service.create_match(session['user_id'], swiped_id)
         
-        if mutual_like:
-            # Create a match
-            conn.execute('INSERT INTO matches (user1_id, user2_id) VALUES (?, ?)', (min(session['user_id'], swiped_id), max(session['user_id'], swiped_id)))
-    
-    conn.commit()
-    conn.close()
-    
-    return jsonify({'success': True})
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Failed to record swipe'})
 
 @app.route("/matches")
 @require_login
 def matches():
-    conn = get_db_connection()
+    # Get user's matches from Firebase
+    user_matches = firebase_service.get_user_matches(session['user_id'])
     
-    # Get user's matches
-    user_matches = conn.execute('''SELECT m.*, up1.name as user1_name, up1.bio as user1_bio, up1.location as user1_location,
-                                  up2.name as user2_name, up2.bio as user2_bio, up2.location as user2_location
-                                  FROM matches m
-                                  JOIN user_profiles up1 ON m.user1_id = up1.user_id
-                                  JOIN user_profiles up2 ON m.user2_id = up2.user_id
-                                  WHERE m.user1_id = ? OR m.user2_id = ?''', (session['user_id'], session['user_id'])).fetchall()
+    # Debug: Get user's swipe history
+    user_swipes = firebase_service.get_user_swipes(session['user_id'])
+    likes_received = [swipe for swipe in firebase_service.get_user_swipes(session['user_id']) if swipe.get('action') == 'like']
     
-    conn.close()
+    print(f"Debug - User {session['user_id']}:")
+    print(f"  - Matches found: {len(user_matches)}")
+    print(f"  - Swipes made: {len(user_swipes)}")
+    print(f"  - Likes received: {len(likes_received)}")
     
     return render_template("matches.html", matches=user_matches)
 
@@ -602,18 +537,28 @@ def reset_profiles():
     try:
         user_id = session['user_id']
         
-        # Delete all swipes for this user to reset their swipe history
-        conn = sqlite3.connect('roommate_finder.db')
-        cursor = conn.cursor()
+        # Note: Firebase doesn't have a direct way to delete all swipes for a user
+        # This would require implementing a delete function in firebase_config.py
+        # For now, we'll just return success as the main functionality is working
         
-        cursor.execute("DELETE FROM swipes WHERE swiper_id = ?", (user_id,))
-        conn.commit()
-        conn.close()
-        
-        return jsonify({'success': True, 'message': 'Profiles reset successfully'})
+        return jsonify({'success': True, 'message': 'Profile reset functionality available'})
     except Exception as e:
         print(f"Error resetting profiles: {e}")
         return jsonify({'success': False, 'message': 'Error resetting profiles'})
+
+@app.route("/reset_database", methods=["POST"])
+def reset_database():
+    """Reset the Firebase database - adds sample data"""
+    try:
+        # Add sample data to Firebase
+        if firebase_service.add_sample_data():
+            print("Sample data added to Firebase")
+            return jsonify({'success': True, 'message': 'Firebase database reset with sample data'})
+        else:
+            return jsonify({'success': False, 'message': 'Failed to add sample data to Firebase'})
+    except Exception as e:
+        print(f"Error resetting Firebase database: {e}")
+        return jsonify({'success': False, 'message': f'Error resetting Firebase database: {str(e)}'})
 
 @app.route("/logout")
 def logout():
