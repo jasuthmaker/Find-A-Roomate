@@ -232,15 +232,23 @@
     </div>
 
     <script>
-        // Add interactive animations
+        // Add interactive animations for interest items
         document.querySelectorAll('.interest-item').forEach(item => {
-            item.addEventListener('click', function() {
-                this.classList.toggle('selected');
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('selected', checkbox.checked);
             });
         });
 
+        // Add interactive animations for radio items
         document.querySelectorAll('.radio-item').forEach(item => {
-            item.addEventListener('click', function() {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
                 // Remove selected class from siblings
                 this.parentElement.querySelectorAll('.radio-item').forEach(sibling => {
                     sibling.classList.remove('selected');
